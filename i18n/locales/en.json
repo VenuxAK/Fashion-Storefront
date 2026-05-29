@@ -1,0 +1,26 @@
+{
+  "common": {
+    "search": "Search products...",
+    "cart": "My Cart",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "checkout": "Checkout",
+    "view_cart": "View Cart",
+    "empty_cart": "Your cart is empty.",
+    "subtotal": "Subtotal",
+    "categories": "Categories",
+    "home": "Home",
+    "shop": "Shop",
+    "contact": "Contact",
+    "about": "About Us"
+  },
+  "product": {
+    "add_to_cart": "Add to Cart",
+    "buy_now": "Buy Now",
+    "quick_view": "Quick View",
+    "out_of_stock": "Out of Stock",
+    "new": "New",
+    "sale": "Sale"
+  }
+}
