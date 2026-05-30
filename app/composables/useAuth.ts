@@ -9,7 +9,7 @@ export const useAuth = () => {
         method: 'POST',
         body: credentials
       })
-      user.value = response.user
+      user.value = response.customer
       token.value = response.token
       return response
     } catch (error) {
@@ -23,7 +23,7 @@ export const useAuth = () => {
         method: 'POST',
         body: data
       })
-      user.value = response.user
+      user.value = response.customer
       token.value = response.token
       return response
     } catch (error) {

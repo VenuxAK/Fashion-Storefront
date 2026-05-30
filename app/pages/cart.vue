@@ -6,7 +6,7 @@ const cartStore = useCartStore()
 
 const config = useRuntimeConfig()
 const getImageUrl = (image: string) => {
-  if (!image) return 'https://via.placeholder.com/100'
+  if (!image) return 'https://placehold.co/100'
   if (image.startsWith('http')) return image
   const baseUrl = config.public.apiUrl.replace('/api', '')
   return `${baseUrl}/storage/${image}`
@@ -54,7 +54,7 @@ onMounted(() => {
                 </td>
                 <td class="md:text-center py-4 md:py-8">
                   <span class="md:hidden text-xs font-bold uppercase tracking-widest text-gray-400 mr-2">Price:</span>
-                  <span class="text-sm font-medium">${{ parseFloat(item.price).toFixed(2) }}</span>
+                  <span class="text-sm font-medium">${{ parseFloat(String(item.price)).toFixed(2) }}</span>
                 </td>
                 <td class="md:text-center py-4 md:py-8">
                   <div class="flex items-center justify-start md:justify-center">
@@ -67,7 +67,7 @@ onMounted(() => {
                 </td>
                 <td class="text-right py-4 md:py-8">
                   <span class="md:hidden text-xs font-bold uppercase tracking-widest text-gray-400 mr-2 float-left">Total:</span>
-                  <span class="text-sm font-bold">${{ (item.price * item.quantity).toFixed(2) }}</span>
+                  <span class="text-sm font-bold">${{ (parseFloat(String(item.price)) * item.quantity).toFixed(2) }}</span>
                 </td>
                 <td class="text-right py-4 md:py-8 pl-6">
                   <button @click="cartStore.removeItem(item.variant_id)" class="text-gray-300 hover:text-red-500 transition-colors">

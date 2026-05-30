@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { Search, User, ShoppingBag, Menu, X, Heart } from 'lucide-vue-next'
 import { useWindowScroll } from '@vueuse/core'
+import { useUiStore } from '~/stores/ui'
+import { useCartStore } from '~/stores/cart'
 
+const uiStore = useUiStore()
+const cartStore = useCartStore()
 const { y } = useWindowScroll()
 const isScrolled = computed(() => y.value > 50)
 
@@ -72,7 +76,9 @@ const toggleLocale = () => {
           @click="uiStore.openMiniCart()"
         >
           <ShoppingBag class="w-5 h-5" />
-          <span class="absolute -top-2 -right-2 bg-primary text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">0</span>
+          <span class="absolute -top-2 -right-2 bg-primary text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+            {{ cartStore.totalItems }}
+          </span>
         </button>
       </div>
     </div>

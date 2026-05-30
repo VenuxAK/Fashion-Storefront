@@ -21,7 +21,7 @@ const activeTab = ref('description')
 
 const config = useRuntimeConfig()
 const imageUrl = computed(() => {
-  if (!product.value?.image) return 'https://via.placeholder.com/800x1000'
+  if (!product.value?.image) return 'https://placehold.co/800x1000'
   if (product.value.image.startsWith('http')) return product.value.image
   const baseUrl = config.public.apiUrl.replace('/api', '')
   return `${baseUrl}/storage/${product.value.image}`

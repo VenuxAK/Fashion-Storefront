@@ -23,16 +23,20 @@ export const useCartStore = defineStore('cart', () => {
 
     try {
       const response: any = await api('/cart')
-      items.value = response.data.map(item => ({
-        id: item.id,
-        variant_id: item.product_variant_id,
-        name: item.variant.product.name,
-        price: item.variant.price,
-        quantity: item.quantity,
-        image: item.variant.image || item.variant.product.image,
-        color: item.variant.color,
-        size: item.variant.size
-      }))
+      items.value = response.data.map((item: any) => {
+        const basePrice = parseFloat(String(item.variant.product.base_price || 0))
+        const adjustment = parseFloat(String(item.variant.price_adjustment || 0))
+        return {
+          id: item.id,
+          variant_id: item.product_variant_id,
+          name: item.variant.product.name,
+          price: basePrice + adjustment,
+          quantity: item.quantity,
+          image: item.variant.image || item.variant.product.image,
+          color: item.variant.color,
+          size: item.variant.size
+        }
+      })
     } catch (error) {
       console.error('Failed to fetch cart', error)
     }
@@ -40,14 +44,18 @@ export const useCartStore = defineStore('cart', () => {
 
   const addToCart = async (product: any, variant: any, quantity: number = 1) => {
     if (!auth.isLoggedIn.value) {
-      const existing = items.value.find(item => item.variant_id === variant.id)
+      const existing = items.value.find((item: any) => item.variant_id === variant.id)
+      const basePrice = parseFloat(String(product.base_price || 0))
+      const adjustment = parseFloat(String(variant.price_adjustment || 0))
+      const price = basePrice + adjustment
+
       if (existing) {
         existing.quantity += quantity
       } else {
         items.value.push({
           variant_id: variant.id,
           name: product.name,
-          price: variant.price,
+          price: price,
           quantity,
           image: variant.image || product.image,
           color: variant.color,

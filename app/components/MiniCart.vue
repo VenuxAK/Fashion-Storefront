@@ -8,7 +8,7 @@ const cartStore = useCartStore()
 
 const config = useRuntimeConfig()
 const getImageUrl = (image: string) => {
-  if (!image) return 'https://via.placeholder.com/100'
+  if (!image) return 'https://placehold.co/100'
   if (image.startsWith('http')) return image
   const baseUrl = config.public.apiUrl.replace('/api', '')
   return `${baseUrl}/storage/${image}`
@@ -85,8 +85,8 @@ onMounted(() => {
               </div>
               <p class="text-xs text-gray-500">{{ item.color }} / {{ item.size }}</p>
               <div class="flex justify-between items-end mt-4">
-                <span class="text-sm font-medium text-gray-500">{{ item.quantity }} x ${{ parseFloat(item.price).toFixed(2) }}</span>
-                <span class="text-sm font-bold">${{ (item.price * item.quantity).toFixed(2) }}</span>
+                <span class="text-sm font-medium text-gray-500">{{ item.quantity }} x ${{ parseFloat(String(item.price)).toFixed(2) }}</span>
+                <span class="text-sm font-bold">${{ (parseFloat(String(item.price)) * item.quantity).toFixed(2) }}</span>
               </div>
             </div>
           </div>

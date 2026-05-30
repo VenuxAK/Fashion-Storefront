@@ -18,7 +18,7 @@ const props = defineProps<{
 
 const config = useRuntimeConfig()
 const imageUrl = computed(() => {
-  if (!props.product.image) return 'https://via.placeholder.com/800x1000'
+  if (!props.product.image) return 'https://placehold.co/800x1000'
   if (props.product.image.startsWith('http')) return props.product.image
   const baseUrl = config.public.apiUrl.replace('/api', '')
   return `${baseUrl}/storage/${props.product.image}`
