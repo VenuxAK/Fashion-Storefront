@@ -4,8 +4,11 @@ import { useWindowScroll } from '@vueuse/core'
 import { useUiStore } from '~/stores/ui'
 import { useCartStore } from '~/stores/cart'
 
+import { useWishlistStore } from '~/stores/wishlist'
+
 const uiStore = useUiStore()
 const cartStore = useCartStore()
+const wishlistStore = useWishlistStore()
 const { isLoggedIn, user } = useAuth()
 const { y } = useWindowScroll()
 const isScrolled = computed(() => y.value > 50)
@@ -73,10 +76,12 @@ const toggleLocale = () => {
           </span>
         </NuxtLink>
         
-        <button class="hover:text-accent transition-colors relative">
+        <NuxtLink to="/wishlist" class="hover:text-accent transition-colors relative">
           <Heart class="w-5 h-5" />
-          <span class="absolute -top-2 -right-2 bg-accent text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">0</span>
-        </button>
+          <span class="absolute -top-2 -right-2 bg-accent text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+            {{ wishlistStore.items.length }}
+          </span>
+        </NuxtLink>
         
         <button 
           class="hover:text-accent transition-colors relative"

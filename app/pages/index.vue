@@ -12,7 +12,20 @@ const { data: categoriesData } = await useAsyncData('categories', () =>
 )
 
 const featuredProducts = computed(() => productsData.value?.data || [])
-const categories = computed(() => categoriesData.value?.data || [])
+const categories = computed(() => {
+  const cats = categoriesData.value?.data || []
+  const placeholders = [
+    'https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?q=80&w=400&auto=format&fit=crop', // Men
+    'https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=400&auto=format&fit=crop', // Women
+    'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=400&auto=format&fit=crop', // Accessories
+    'https://images.unsplash.com/photo-1509319117193-57bab727e09d?q=80&w=400&auto=format&fit=crop', // Shoes
+    'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=400&auto=format&fit=crop'  // Bags
+  ]
+  return cats.map((cat: any, index: number) => ({
+    ...cat,
+    image: placeholders[index % placeholders.length]
+  }))
+})
 </script>
 
 <template>
@@ -49,28 +62,25 @@ const categories = computed(() => categoriesData.value?.data || [])
       </div>
     </section>
 
-    <!-- Category Grid -->
+    <!-- Minimalist Category Navigation -->
     <section class="container">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+      <div class="flex flex-wrap justify-center gap-8 md:gap-16">
         <NuxtLink 
           v-for="cat in categories" 
-          :key="cat.name" 
-          to="/shop" 
-          class="group relative aspect-[4/5] overflow-hidden bg-gray-100"
+          :key="cat.id" 
+          :to="`/shop?category_id=${cat.id}`" 
+          class="group text-center space-y-4"
         >
-          <img 
-            :src="cat.image" 
-            :alt="cat.name" 
-            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-          >
-          <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-500"></div>
-          <div class="absolute bottom-10 left-10 text-white space-y-2">
-            <h3 class="text-3xl font-bold uppercase tracking-tight">{{ cat.name }}</h3>
-            <div class="flex items-center space-x-2 text-xs uppercase tracking-widest font-bold opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-              <span>View Collection</span>
-              <ArrowRight class="w-4 h-4" />
-            </div>
+          <div class="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-2 border-transparent group-hover:border-accent transition-all p-1 shadow-sm">
+            <img 
+              :src="cat.image" 
+              :alt="cat.name" 
+              class="w-full h-full object-cover rounded-full grayscale group-hover:grayscale-0 transition-all duration-500"
+            >
           </div>
+          <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 group-hover:text-primary transition-colors">
+            {{ cat.name }}
+          </p>
         </NuxtLink>
       </div>
     </section>
@@ -89,7 +99,7 @@ const categories = computed(() => categoriesData.value?.data || [])
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
         <ProductCard 
-          v-for="product in featuredProducts" 
+          v-for="product in featuredProducts.slice(0, 4)" 
           :key="product.id" 
           :product="product" 
         />

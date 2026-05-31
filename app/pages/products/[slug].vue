@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { Heart, ShoppingBag, Share2, Plus, Minus, ChevronRight, ChevronLeft } from 'lucide-vue-next'
 import { useCartStore } from '~/stores/cart'
+import { useWishlistStore } from '~/stores/wishlist'
+import { useNotify } from '~/composables/useNotify'
 
 const route = useRoute()
 const { getProductBySlug } = useProduct()
 const cartStore = useCartStore()
+const wishlistStore = useWishlistStore()
 const { notify } = useNotify()
 
 const { data: productData, error } = await useAsyncData(
@@ -39,6 +42,20 @@ const addToCart = () => {
   
   cartStore.addToCart(product.value, variant, quantity.value)
   notify(`Added ${quantity.value} ${product.value.name} to cart.`, 'success')
+}
+
+const toggleWishlist = () => {
+  if (!product.value) return
+  wishlistStore.toggleWishlist({
+    id: product.value.id,
+    name: product.value.name,
+    slug: product.value.slug,
+    price: parseFloat(String(product.value.base_price)),
+    image: product.value.image,
+    category: product.value.category?.name
+  })
+  const action = wishlistStore.isInWishlist(product.value.id) ? 'added to' : 'removed from'
+  notify(`Product ${action} wishlist.`, 'success')
 }
 </script>
 
@@ -146,8 +163,12 @@ const addToCart = () => {
           >
             Add to Cart
           </button>
-          <button class="w-14 h-14 border border-gray-100 flex items-center justify-center hover:bg-gray-50 transition-colors">
-            <Heart class="w-5 h-5" />
+          <button 
+            @click="toggleWishlist"
+            class="w-14 h-14 border border-gray-100 flex items-center justify-center hover:bg-gray-50 transition-colors"
+            :class="[wishlistStore.isInWishlist(product.id) ? 'text-accent' : 'text-primary']"
+          >
+            <Heart class="w-5 h-5" :class="{'fill-current': wishlistStore.isInWishlist(product.id)}" />
           </button>
         </div>
 

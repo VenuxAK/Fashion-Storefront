@@ -1,10 +1,12 @@
 <script setup lang="ts">
 const { fetchUser, token } = useAuth()
+const wishlistStore = useWishlistStore()
 
 onMounted(() => {
   if (token.value) {
     fetchUser()
   }
+  wishlistStore.loadWishlist()
 })
 </script>
 
