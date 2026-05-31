@@ -12,5 +12,6 @@
     
     <AppFooter />
     <MiniCart />
+    <NotificationToast />
   </div>
 </template>

@@ -40,7 +40,7 @@ onMounted(() => {
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-50">
-              <tr v-for="item in cartStore.items" :key="item.variant_id" class="flex flex-col md:table-row py-8 md:py-0">
+              <tr v-for="item in cartStore.items" :key="item.id" class="flex flex-col md:table-row py-8 md:py-0">
                 <td class="py-8">
                   <div class="flex items-center space-x-6">
                     <div class="w-24 h-24 bg-gray-50 flex-shrink-0">
@@ -54,23 +54,23 @@ onMounted(() => {
                 </td>
                 <td class="md:text-center py-4 md:py-8">
                   <span class="md:hidden text-xs font-bold uppercase tracking-widest text-gray-400 mr-2">Price:</span>
-                  <span class="text-sm font-medium">${{ parseFloat(String(item.price)).toFixed(2) }}</span>
+                  <span class="text-sm font-medium">${{ parseFloat(String(item.price || 0)).toFixed(2) }}</span>
                 </td>
                 <td class="md:text-center py-4 md:py-8">
                   <div class="flex items-center justify-start md:justify-center">
                     <div class="flex items-center border border-gray-100 h-10">
-                      <button @click="cartStore.updateQuantity(item.variant_id, item.quantity - 1)" class="px-3 hover:text-accent"><Minus class="w-3 h-3" /></button>
+                      <button @click="cartStore.updateQuantity(item.id, item.quantity - 1)" class="px-3 hover:text-accent"><Minus class="w-3 h-3" /></button>
                       <span class="w-8 text-center text-xs font-bold">{{ item.quantity }}</span>
-                      <button @click="cartStore.updateQuantity(item.variant_id, item.quantity + 1)" class="px-3 hover:text-accent"><Plus class="w-3 h-3" /></button>
+                      <button @click="cartStore.updateQuantity(item.id, item.quantity + 1)" class="px-3 hover:text-accent"><Plus class="w-3 h-3" /></button>
                     </div>
                   </div>
                 </td>
                 <td class="text-right py-4 md:py-8">
                   <span class="md:hidden text-xs font-bold uppercase tracking-widest text-gray-400 mr-2 float-left">Total:</span>
-                  <span class="text-sm font-bold">${{ (parseFloat(String(item.price)) * item.quantity).toFixed(2) }}</span>
+                  <span class="text-sm font-bold">${{ (parseFloat(String(item.price || 0)) * item.quantity).toFixed(2) }}</span>
                 </td>
                 <td class="text-right py-4 md:py-8 pl-6">
-                  <button @click="cartStore.removeItem(item.variant_id)" class="text-gray-300 hover:text-red-500 transition-colors">
+                  <button @click="cartStore.removeItem(item.id)" class="text-gray-300 hover:text-red-500 transition-colors">
                     <Trash2 class="w-4 h-4" />
                   </button>
                 </td>

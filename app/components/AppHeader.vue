@@ -6,6 +6,7 @@ import { useCartStore } from '~/stores/cart'
 
 const uiStore = useUiStore()
 const cartStore = useCartStore()
+const { isLoggedIn, user } = useAuth()
 const { y } = useWindowScroll()
 const isScrolled = computed(() => y.value > 50)
 
@@ -62,8 +63,14 @@ const toggleLocale = () => {
           <Search class="w-5 h-5" />
         </button>
         
-        <NuxtLink to="/login" class="hover:text-accent transition-colors">
+        <NuxtLink 
+          :to="isLoggedIn ? '/my/profile' : '/login'" 
+          class="hover:text-accent transition-colors flex items-center space-x-2"
+        >
           <User class="w-5 h-5" />
+          <span v-if="isLoggedIn && user" class="hidden md:block text-[10px] font-bold uppercase tracking-widest max-w-[80px] truncate">
+            {{ user.name }}
+          </span>
         </NuxtLink>
         
         <button class="hover:text-accent transition-colors relative">
@@ -120,4 +127,3 @@ const toggleLocale = () => {
   <!-- Spacer to prevent content from going under fixed header -->
   <div class="h-[80px]"></div>
 </template>
-mplate>

@@ -6,11 +6,19 @@ export const useCartStore = defineStore('cart', () => {
   const auth = useAuth()
 
   const subtotal = computed(() => {
-    return items.value.reduce((acc, item) => acc + (item.price * item.quantity), 0)
+    return items.value.reduce((acc, item) => {
+      const price = parseFloat(String(item.price || 0))
+      const qty = parseInt(String(item.quantity || 0))
+      const sum = acc + (isNaN(price * qty) ? 0 : (price * qty))
+      return sum
+    }, 0)
   })
 
   const totalItems = computed(() => {
-    return items.value.reduce((acc, item) => acc + item.quantity, 0)
+    return items.value.reduce((acc, item) => {
+      const qty = parseInt(String(item.quantity || 0))
+      return acc + (isNaN(qty) ? 0 : qty)
+    }, 0)
   })
 
   const fetchCart = async () => {
@@ -24,17 +32,22 @@ export const useCartStore = defineStore('cart', () => {
     try {
       const response: any = await api('/cart')
       items.value = response.data.map((item: any) => {
-        const basePrice = parseFloat(String(item.variant.product.base_price || 0))
-        const adjustment = parseFloat(String(item.variant.price_adjustment || 0))
+        const rawBasePrice = item.variant?.product?.base_price
+        const rawAdjustment = item.variant?.price_adjustment
+        
+        const basePrice = (rawBasePrice !== undefined && rawBasePrice !== null) ? parseFloat(String(rawBasePrice)) : 0
+        const adjustment = (rawAdjustment !== undefined && rawAdjustment !== null) ? parseFloat(String(rawAdjustment)) : 0
+        const price = isNaN(basePrice + adjustment) ? 0 : (basePrice + adjustment)
+        
         return {
           id: item.id,
           variant_id: item.product_variant_id,
-          name: item.variant.product.name,
-          price: basePrice + adjustment,
+          name: item.variant?.product?.name || 'Unknown Product',
+          price: price,
           quantity: item.quantity,
-          image: item.variant.image || item.variant.product.image,
-          color: item.variant.color,
-          size: item.variant.size
+          image: item.variant?.image || item.variant?.product?.image,
+          color: item.variant?.color,
+          size: item.variant?.size
         }
       })
     } catch (error) {
@@ -45,21 +58,21 @@ export const useCartStore = defineStore('cart', () => {
   const addToCart = async (product: any, variant: any, quantity: number = 1) => {
     if (!auth.isLoggedIn.value) {
       const existing = items.value.find((item: any) => item.variant_id === variant.id)
-      const basePrice = parseFloat(String(product.base_price || 0))
-      const adjustment = parseFloat(String(variant.price_adjustment || 0))
-      const price = basePrice + adjustment
+      const basePrice = parseFloat(String(product?.base_price || 0))
+      const adjustment = parseFloat(String(variant?.price_adjustment || 0))
+      const price = isNaN(basePrice + adjustment) ? 0 : (basePrice + adjustment)
 
       if (existing) {
         existing.quantity += quantity
       } else {
         items.value.push({
           variant_id: variant.id,
-          name: product.name,
+          name: product?.name || 'Unknown Product',
           price: price,
           quantity,
-          image: variant.image || product.image,
-          color: variant.color,
-          size: variant.size
+          image: variant?.image || product?.image,
+          color: variant?.color,
+          size: variant?.size
         })
       }
       localStorage.setItem('cart', JSON.stringify(items.value))
@@ -80,13 +93,13 @@ export const useCartStore = defineStore('cart', () => {
     }
   }
 
-  const updateQuantity = async (variantId: number, quantity: number) => {
+  const updateQuantity = async (itemId: number, quantity: number) => {
     if (!auth.isLoggedIn.value) {
-      const item = items.value.find(i => i.variant_id === variantId)
+      const item = items.value.find((i: any) => i.variant_id === itemId) // local storage uses variant_id as 'id' for simplicity or consistent keys
       if (item) {
         item.quantity = quantity
         if (item.quantity <= 0) {
-          items.value = items.value.filter(i => i.variant_id !== variantId)
+          items.value = items.value.filter((i: any) => i.variant_id !== itemId)
         }
       }
       localStorage.setItem('cart', JSON.stringify(items.value))
@@ -94,7 +107,7 @@ export const useCartStore = defineStore('cart', () => {
     }
 
     try {
-      await api(`/cart/${variantId}`, {
+      await api(`/cart/${itemId}`, {
         method: 'PUT',
         body: { quantity }
       })
@@ -104,15 +117,15 @@ export const useCartStore = defineStore('cart', () => {
     }
   }
 
-  const removeItem = async (variantId: number) => {
+  const removeItem = async (itemId: number) => {
     if (!auth.isLoggedIn.value) {
-      items.value = items.value.filter(i => i.variant_id !== variantId)
+      items.value = items.value.filter((i: any) => i.variant_id !== itemId)
       localStorage.setItem('cart', JSON.stringify(items.value))
       return
     }
 
     try {
-      await api(`/cart/${variantId}`, { method: 'DELETE' })
+      await api(`/cart/${itemId}`, { method: 'DELETE' })
       await fetchCart()
     } catch (error) {
       console.error('Failed to remove item', error)

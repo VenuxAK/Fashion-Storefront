@@ -7,12 +7,14 @@ definePageMeta({
 
 const { getAddresses, createAddress } = useCheckout() // Reusing from useCheckout
 const api = useApi() // For delete and default actions
+const { notify } = useNotify()
 
 const addresses = ref([])
 const isLoading = ref(false)
 const isAddingAddress = ref(false)
 
 const newAddress = reactive({
+  type: 'shipping',
   name: '', phone: '', street: '', city: '', state: '', postal_code: '', is_default: false
 })
 
@@ -34,11 +36,13 @@ const handleAddAddress = async () => {
     await createAddress(newAddress)
     await fetchAddresses()
     isAddingAddress.value = false
+    notify('Address added successfully.', 'success')
     Object.assign(newAddress, {
+      type: 'shipping',
       name: '', phone: '', street: '', city: '', state: '', postal_code: '', is_default: false
     })
   } catch (err) {
-    alert('Failed to add address.')
+    notify('Failed to add address.', 'error')
   } finally {
     isLoading.value = false
   }
@@ -49,8 +53,9 @@ const deleteAddress = async (id: number) => {
   try {
     await api(`/addresses/${id}`, { method: 'DELETE' })
     await fetchAddresses()
+    notify('Address deleted.', 'success')
   } catch (err) {
-    alert('Failed to delete address.')
+    notify('Failed to delete address.', 'error')
   }
 }
 
@@ -58,8 +63,9 @@ const setDefault = async (id: number) => {
   try {
     await api(`/addresses/${id}/default`, { method: 'PUT' })
     await fetchAddresses()
+    notify('Default address updated.', 'success')
   } catch (err) {
-    alert('Failed to set default address.')
+    notify('Failed to set default address.', 'error')
   }
 }
 

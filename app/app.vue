@@ -1,5 +1,11 @@
 <script setup lang="ts">
-// Root app component
+const { fetchUser, token } = useAuth()
+
+onMounted(() => {
+  if (token.value) {
+    fetchUser()
+  }
+})
 </script>
 
 <template>

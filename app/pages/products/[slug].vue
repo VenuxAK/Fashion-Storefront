@@ -5,6 +5,7 @@ import { useCartStore } from '~/stores/cart'
 const route = useRoute()
 const { getProductBySlug } = useProduct()
 const cartStore = useCartStore()
+const { notify } = useNotify()
 
 const { data: productData, error } = await useAsyncData(
   `product-${route.params.slug}`,
@@ -37,7 +38,7 @@ const addToCart = () => {
   const variant = product.value.variants?.[0] || { id: product.value.id, price: product.value.base_price }
   
   cartStore.addToCart(product.value, variant, quantity.value)
-  alert(`Added ${quantity.value} ${product.value.name} to cart.`)
+  notify(`Added ${quantity.value} ${product.value.name} to cart.`, 'success')
 }
 </script>
 

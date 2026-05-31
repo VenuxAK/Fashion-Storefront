@@ -72,21 +72,21 @@ onMounted(() => {
             </NuxtLink>
           </div>
 
-          <div v-else v-for="item in cartStore.items" :key="item.variant_id" class="flex space-x-4 border-b border-gray-50 pb-6">
+          <div v-else v-for="item in cartStore.items" :key="item.id" class="flex space-x-4 border-b border-gray-50 pb-6">
             <div class="w-24 h-24 flex-shrink-0 bg-gray-50">
               <img :src="getImageUrl(item.image)" :alt="item.name" class="w-full h-full object-cover">
             </div>
             <div class="flex-grow space-y-1">
               <div class="flex justify-between items-start">
                 <h3 class="text-sm font-bold uppercase">{{ item.name }}</h3>
-                <button @click="cartStore.removeItem(item.variant_id)" class="text-gray-400 hover:text-red-500 transition-colors">
+                <button @click="cartStore.removeItem(item.id)" class="text-gray-400 hover:text-red-500 transition-colors">
                   <Trash2 class="w-4 h-4" />
                 </button>
               </div>
               <p class="text-xs text-gray-500">{{ item.color }} / {{ item.size }}</p>
               <div class="flex justify-between items-end mt-4">
-                <span class="text-sm font-medium text-gray-500">{{ item.quantity }} x ${{ parseFloat(String(item.price)).toFixed(2) }}</span>
-                <span class="text-sm font-bold">${{ (parseFloat(String(item.price)) * item.quantity).toFixed(2) }}</span>
+                <span class="text-sm font-medium text-gray-500">{{ item.quantity }} x ${{ parseFloat(String(item.price || 0)).toFixed(2) }}</span>
+                <span class="text-sm font-bold">${{ (parseFloat(String(item.price || 0)) * item.quantity).toFixed(2) }}</span>
               </div>
             </div>
           </div>

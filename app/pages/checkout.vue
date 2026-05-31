@@ -5,6 +5,7 @@ definePageMeta({
 
 const { getAddresses, createAddress, placeOrder } = useCheckout()
 const cartStore = useCartStore()
+const { notify } = useNotify()
 
 const addresses = ref([])
 const selectedAddressId = ref<number | null>(null)
@@ -14,6 +15,7 @@ const isPlacingOrder = ref(false)
 const orderNotes = ref('')
 
 const newAddress = reactive({
+  type: 'shipping',
   name: '',
   phone: '',
   street: '',
@@ -45,12 +47,14 @@ const handleAddAddress = async () => {
     addresses.value.push(response.data)
     selectedAddressId.value = response.data.id
     isAddingAddress.value = false
+    notify('Address added successfully.', 'success')
     // Reset form
     Object.assign(newAddress, {
+      type: 'shipping',
       name: '', phone: '', street: '', city: '', state: '', postal_code: '', is_default: false
     })
   } catch (error) {
-    alert('Failed to add address. Please check your details.')
+    notify('Failed to add address. Please check your details.', 'error')
   } finally {
     isLoading.value = false
   }
@@ -58,7 +62,7 @@ const handleAddAddress = async () => {
 
 const handlePlaceOrder = async () => {
   if (!selectedAddressId.value) {
-    alert('Please select or add a shipping address.')
+    notify('Please select or add a shipping address.', 'error')
     return
   }
 
@@ -74,12 +78,21 @@ const handlePlaceOrder = async () => {
     localStorage.removeItem('cart')
     
     // Redirect to success page
-    navigateTo(`/order-success?number=${response.data.order_number}`)
+    const orderNumber = response.order?.order_number || response.data?.order_number
+    navigateTo(`/order-success?number=${orderNumber}`)
   } catch (error: any) {
-    alert(error.data?.message || 'Failed to place order. Please try again.')
+    notify(error.data?.message || 'Failed to place order. Please try again.', 'error')
   } finally {
     isPlacingOrder.value = false
   }
+}
+
+const config = useRuntimeConfig()
+const getImageUrl = (image: string) => {
+  if (!image) return 'https://placehold.co/100'
+  if (image.startsWith('http')) return image
+  const baseUrl = config.public.apiUrl.replace('/api', '')
+  return `${baseUrl}/storage/${image}`
 }
 
 onMounted(() => {
@@ -204,24 +217,24 @@ onMounted(() => {
             <h3 class="text-sm font-bold uppercase tracking-widest border-b border-gray-200 pb-4">Your Order</h3>
             
             <div class="space-y-6 max-h-[400px] overflow-y-auto pr-4">
-              <div v-for="item in cartStore.items" :key="item.variant_id" class="flex justify-between items-center">
+              <div v-for="item in cartStore.items" :key="item.id" class="flex justify-between items-center">
                 <div class="flex items-center space-x-4">
                   <div class="w-12 h-16 bg-white shadow-sm flex-shrink-0">
-                    <img :src="item.image" class="w-full h-full object-cover">
+                    <img :src="getImageUrl(item.image)" class="w-full h-full object-cover">
                   </div>
                   <div>
                     <p class="text-xs font-bold uppercase">{{ item.name }}</p>
                     <p class="text-[10px] text-gray-400 uppercase tracking-widest">Qty: {{ item.quantity }}</p>
                   </div>
                 </div>
-                <span class="text-xs font-bold">${{ (item.price * item.quantity).toFixed(2) }}</span>
+                <span class="text-xs font-bold">${{ (parseFloat(String(item.price)) * item.quantity).toFixed(2) }}</span>
               </div>
             </div>
 
             <div class="border-t border-gray-200 pt-6 space-y-4">
               <div class="flex justify-between text-sm">
                 <span class="text-gray-500 uppercase tracking-widest text-xs font-bold">Subtotal</span>
-                <span class="font-bold">${{ cartStore.subtotal.toFixed(2) }}</span>
+                <span class="font-bold">${{ parseFloat(String(cartStore.subtotal)).toFixed(2) }}</span>
               </div>
               <div class="flex justify-between text-sm">
                 <span class="text-gray-500 uppercase tracking-widest text-xs font-bold">Shipping</span>
@@ -229,7 +242,7 @@ onMounted(() => {
               </div>
               <div class="border-t border-gray-200 pt-6 flex justify-between items-center text-xl font-bold uppercase">
                 <span>Total</span>
-                <span>${{ cartStore.subtotal.toFixed(2) }}</span>
+                <span>${{ parseFloat(String(cartStore.subtotal)).toFixed(2) }}</span>
               </div>
             </div>
 
