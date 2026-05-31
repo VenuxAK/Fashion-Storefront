@@ -1,75 +1,57 @@
-# Nuxt Minimal Starter
+# SimpCommerce — Minimalist Boutique Storefront
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+A high-performance, modern storefront built with **Nuxt 4** and **Tailwind CSS v4**. This project is the primary e-commerce client for the SimpCommerce platform, specifically tailored for the "Clothing" store.
 
-## Setup
+## ✨ Features
 
-Make sure to install dependencies:
+- **Nuxt 4 Engine:** Leveraging the latest SSR capabilities and directory structure.
+- **Tailwind v4:** Using the high-speed `@tailwindcss/vite` engine for minimalist styling.
+- **Advanced Search:** Full-screen search overlay with live API results.
+- **Dynamic Catalog:** Multi-filter Shop page with Grid/List view toggles.
+- **Smart Cart:** Pinia-based cart that syncs with the API and persists for guests.
+- **Wishlist:** Client-side wishlist for saving favorite items.
+- **Customer Portal:** Dedicated area for Order History, Address Book, and Profile management.
+- **Global i18n:** Full support for English and Burmese (မြန်မာ) languages.
+- **Mobile First:** Optimized for all devices with zero layout overflow.
 
+## 🚀 Getting Started
+
+### 1. Prerequisites
+- **Bun** (Recommended) or Node.js 18+
+- SimpCommerce API running at `http://localhost:8000`
+
+### 2. Installation
 ```bash
-# npm
-npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
 bun install
 ```
 
-## Development Server
+### 3. Environment Setup
+Create a `.env` file or use the default runtime configuration:
+```env
+NUXT_PUBLIC_API_URL=http://localhost:8000/api
+NUXT_PUBLIC_STORE_SLUG=clothing
+```
 
-Start the development server on `http://localhost:3000`:
-
+### 4. Development
 ```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
 bun run dev
 ```
+The storefront will be available at `http://localhost:3000`.
 
-## Production
-
-Build the application for production:
-
+### 5. Production
 ```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
 bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
 bun run preview
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## 📄 Documentation
+
+- [Detailed Specification](./SPECIFICATION.md) — Technical architecture and feature deep-dive.
+
+## 🛠 Tech Stack
+
+- **Framework:** [Nuxt 4](https://nuxt.com/)
+- **State:** [Pinia](https://pinia.vuejs.org/)
+- **Styles:** [Tailwind CSS v4](https://tailwindcss.com/)
+- **Icons:** [Lucide](https://lucide.dev/)
+- **Localization:** [Nuxt i18n](https://i18n.nuxtjs.org/)
