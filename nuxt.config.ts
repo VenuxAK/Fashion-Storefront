@@ -51,5 +51,16 @@ export default defineNuxtConfig({
     }
   },
 
+  app: {
+    pageTransition: { name: 'page', mode: 'out-in' },
+    head: {
+      title: 'SimpCommerce | Modern Minimalist Boutique',
+      meta: [
+        { name: 'description', content: 'Discover high-quality fashion essentials for the modern wardrobe.' },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1' }
+      ]
+    }
+  },
+
   css: ['~/assets/css/main.css'],
   })

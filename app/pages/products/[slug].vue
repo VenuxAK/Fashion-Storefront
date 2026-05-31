@@ -57,6 +57,17 @@ const toggleWishlist = () => {
   const action = wishlistStore.isInWishlist(product.value.id) ? 'added to' : 'removed from'
   notify(`Product ${action} wishlist.`, 'success')
 }
+
+watch(product, (newVal) => {
+  if (newVal) {
+    useSeoMeta({
+      title: `${newVal.name} | SimpCommerce`,
+      description: newVal.description,
+      ogTitle: newVal.name,
+      ogDescription: newVal.description,
+    })
+  }
+}, { immediate: true })
 </script>
 
 <template>

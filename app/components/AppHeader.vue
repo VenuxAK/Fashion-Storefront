@@ -3,7 +3,6 @@ import { Search, User, ShoppingBag, Menu, X, Heart } from 'lucide-vue-next'
 import { useWindowScroll } from '@vueuse/core'
 import { useUiStore } from '~/stores/ui'
 import { useCartStore } from '~/stores/cart'
-
 import { useWishlistStore } from '~/stores/wishlist'
 
 const uiStore = useUiStore()
@@ -57,28 +56,31 @@ const toggleLocale = () => {
       </nav>
 
       <!-- Icons -->
-      <div class="flex items-center space-x-5">
-        <button @click="toggleLocale" class="text-xs font-bold uppercase hover:text-accent">
+      <div class="flex items-center space-x-3 md:space-x-5">
+        <button @click="toggleLocale" class="text-[10px] md:text-xs font-bold uppercase hover:text-accent">
           {{ locale === 'en' ? 'MY' : 'EN' }}
         </button>
         
-        <button class="hover:text-accent transition-colors">
-          <Search class="w-5 h-5" />
+        <button 
+          @click="uiStore.isSearchOpen = true"
+          class="hover:text-accent transition-colors"
+        >
+          <Search class="w-4 h-4 md:w-5 md:h-5" />
         </button>
         
         <NuxtLink 
           :to="isLoggedIn ? '/my/profile' : '/login'" 
           class="hover:text-accent transition-colors flex items-center space-x-2"
         >
-          <User class="w-5 h-5" />
-          <span v-if="isLoggedIn && user" class="hidden md:block text-[10px] font-bold uppercase tracking-widest max-w-[80px] truncate">
+          <User class="w-4 h-4 md:w-5 md:h-5" />
+          <span v-if="isLoggedIn && user" class="hidden lg:block text-[10px] font-bold uppercase tracking-widest max-w-[80px] truncate">
             {{ user.name }}
           </span>
         </NuxtLink>
         
         <NuxtLink to="/wishlist" class="hover:text-accent transition-colors relative">
-          <Heart class="w-5 h-5" />
-          <span class="absolute -top-2 -right-2 bg-accent text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+          <Heart class="w-4 h-4 md:w-5 md:h-5" />
+          <span class="absolute -top-1.5 -right-1.5 bg-accent text-white text-[8px] md:text-[10px] w-3 h-3 md:w-4 md:h-4 rounded-full flex items-center justify-center">
             {{ wishlistStore.items.length }}
           </span>
         </NuxtLink>
@@ -87,8 +89,8 @@ const toggleLocale = () => {
           class="hover:text-accent transition-colors relative"
           @click="uiStore.openMiniCart()"
         >
-          <ShoppingBag class="w-5 h-5" />
-          <span class="absolute -top-2 -right-2 bg-primary text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+          <ShoppingBag class="w-4 h-4 md:w-5 md:h-5" />
+          <span class="absolute -top-1.5 -right-1.5 bg-primary text-white text-[8px] md:text-[10px] w-3 h-3 md:w-4 md:h-4 rounded-full flex items-center justify-center">
             {{ cartStore.totalItems }}
           </span>
         </button>
@@ -128,7 +130,5 @@ const toggleLocale = () => {
       </div>
     </Transition>
   </header>
-  
-  <!-- Spacer to prevent content from going under fixed header -->
-  <div class="h-[80px]"></div>
+  <SearchOverlay />
 </template>

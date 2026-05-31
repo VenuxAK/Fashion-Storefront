@@ -26,12 +26,20 @@ const categories = computed(() => {
     image: placeholders[index % placeholders.length]
   }))
 })
+
+useSeoMeta({
+  title: 'Home | SimpCommerce Modern Minimalist Boutique',
+  ogTitle: 'SimpCommerce - Style Reimagined',
+  description: 'Discover our new collection featuring sustainable materials and timeless silhouettes.',
+  ogDescription: 'Discover our new collection featuring sustainable materials and timeless silhouettes.',
+  ogImage: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=800&auto=format&fit=crop',
+})
 </script>
 
 <template>
   <div class="space-y-32 pb-32">
     <!-- Hero Slider -->
-    <section class="relative h-[90vh] overflow-hidden bg-gray-50">
+    <section class="relative h-screen overflow-hidden bg-gray-50">
       <div class="absolute inset-0">
         <img 
           src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2000&auto=format&fit=crop" 
@@ -75,6 +83,7 @@ const categories = computed(() => {
             <img 
               :src="cat.image" 
               :alt="cat.name" 
+              loading="lazy"
               class="w-full h-full object-cover rounded-full grayscale group-hover:grayscale-0 transition-all duration-500"
             >
           </div>

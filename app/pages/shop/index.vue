@@ -33,6 +33,11 @@ const setCategory = (id: string | number) => {
   selectedCategory.value = id
   currentPage.value = 1
 }
+
+useSeoMeta({
+  title: 'Shop All Products | SimpCommerce',
+  description: 'Browse our full collection of modern minimalist fashion essentials.',
+})
 </script>
 
 <template>

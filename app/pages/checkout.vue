@@ -98,6 +98,11 @@ const getImageUrl = (image: string) => {
 onMounted(() => {
   fetchAddresses()
 })
+
+useSeoMeta({
+  title: 'Secure Checkout | SimpCommerce',
+  description: 'Complete your order securely.',
+})
 </script>
 
 <template>

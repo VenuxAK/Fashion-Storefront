@@ -26,6 +26,11 @@ const getImageUrl = (image: string) => {
 onMounted(() => {
   wishlistStore.loadWishlist()
 })
+
+useSeoMeta({
+  title: 'My Wishlist | SimpCommerce',
+  description: 'View the products you love and save them for later.',
+})
 </script>
 
 <template>

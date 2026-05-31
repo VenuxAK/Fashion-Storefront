@@ -48,24 +48,24 @@ const currentYear = new Date().getFullYear()
         <div>
           <h4 class="text-sm font-bold uppercase mb-8">Newsletter</h4>
           <p class="text-gray-500 text-sm mb-6">Subscribe to get special offers and updates.</p>
-          <form @submit.prevent class="flex">
+          <form @submit.prevent class="flex w-full">
             <input 
               type="email" 
               placeholder="Your email address" 
-              class="flex-grow bg-gray-50 border-none px-4 py-3 text-sm focus:ring-1 focus:ring-accent outline-none"
+              class="flex-grow bg-gray-50 border-none px-4 py-3 text-sm focus:ring-1 focus:ring-accent outline-none min-w-0"
             >
-            <button type="submit" class="bg-primary text-white px-4 py-3 text-xs uppercase font-bold tracking-widest hover:bg-black transition-colors">
+            <button type="submit" class="bg-primary text-white px-6 py-3 text-xs uppercase font-bold tracking-widest hover:bg-black transition-colors flex-shrink-0">
               Join
             </button>
           </form>
         </div>
       </div>
 
-      <div class="border-t border-gray-100 pt-10 flex flex-col md:flex-row justify-between items-center text-xs text-gray-400 uppercase tracking-widest space-y-4 md:space-y-0">
-        <p>&copy; {{ currentYear }} SimpCommerce. All Rights Reserved.</p>
-        <div class="flex items-center space-x-6">
-          <span>Privacy Policy</span>
-          <span>Sitemap</span>
+      <div class="border-t border-gray-100 pt-10 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] md:text-xs text-gray-400 uppercase tracking-wider md:tracking-widest">
+        <p class="text-center md:text-left order-2 md:order-1">&copy; {{ currentYear }} SimpCommerce. All Rights Reserved.</p>
+        <div class="flex items-center justify-center space-x-6 order-1 md:order-2">
+          <span class="hover:text-primary cursor-pointer">Privacy Policy</span>
+          <span class="hover:text-primary cursor-pointer">Sitemap</span>
         </div>
       </div>
     </div>

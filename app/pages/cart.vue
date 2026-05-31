@@ -15,6 +15,11 @@ const getImageUrl = (image: string) => {
 onMounted(() => {
   cartStore.fetchCart()
 })
+
+useSeoMeta({
+  title: 'Your Shopping Cart | SimpCommerce',
+  description: 'View and manage the items in your shopping bag.',
+})
 </script>
 
 <template>
