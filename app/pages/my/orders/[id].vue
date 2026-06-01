@@ -2,8 +2,6 @@
 import { ChevronLeft, Package, Truck, CheckCircle, XCircle } from 'lucide-vue-next'
 import { useNotify } from '~/composables/useNotify'
 
-definePageMeta({ middleware: 'sanctum:auth' })
-
 const route = useRoute()
 const { getOrderDetails, cancelOrder } = useProfile()
 const { notify } = useNotify()
