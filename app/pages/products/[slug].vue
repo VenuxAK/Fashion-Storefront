@@ -49,11 +49,17 @@ const colors = computed(() => {
   return [...set]
 })
 
+const needsSelection = computed(() => {
+  return !!(product.value?.variants?.some(v => v.size) || product.value?.variants?.some(v => v.color))
+})
+
 const selectedVariant = computed(() => {
-  return product.value?.variants?.find(v =>
+  if (!product.value?.variants?.length) return null
+  if (!needsSelection.value) return product.value.variants[0]
+  return product.value.variants.find(v =>
     (!selectedSize.value || v.size === selectedSize.value) &&
     (!selectedColor.value || v.color === selectedColor.value)
-  ) || product.value?.variants?.[0]
+  ) || null
 })
 
 const increment = () => quantity.value++
@@ -186,10 +192,10 @@ watch(product, (newVal) => {
           </div>
           <button
             @click="addToCart"
-            class="flex-grow bg-primary text-white h-14 text-xs font-bold uppercase tracking-[0.2em] hover:bg-black transition-colors"
-            :disabled="!selectedVariant"
+            class="flex-grow bg-primary text-white h-14 text-xs font-bold uppercase tracking-[0.2em] hover:bg-black transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            :disabled="!selectedVariant && needsSelection"
           >
-            Add to Cart
+            {{ !selectedVariant && needsSelection ? 'Select Size / Color' : !selectedVariant ? 'Unavailable' : 'Add to Cart' }}
           </button>
           <button
             @click="toggleWishlist"
