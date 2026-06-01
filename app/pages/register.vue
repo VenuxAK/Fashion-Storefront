@@ -93,7 +93,7 @@ const handleRegister = async () => {
         </div>
 
         <p class="text-[10px] text-gray-400 text-center leading-relaxed">
-          By registering, you agree to our <NuxtLink to="/terms" class="underline hover:text-primary">Terms of Service</NuxtLink> and <NuxtLink to="/privacy" class="underline hover:text-primary">Privacy Policy</NuxtLink>.
+          By registering, you agree to our <NuxtLink to="/terms" class="underline hover:text-primary">Terms of Service</NuxtLink> and <NuxtLink to="/terms" class="underline hover:text-primary">Privacy Policy</NuxtLink>.
         </p>
 
         <button 
