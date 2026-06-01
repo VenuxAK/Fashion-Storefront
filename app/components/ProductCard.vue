@@ -23,17 +23,12 @@ const props = withDefaults(defineProps<{
   view: 'grid'
 })
 
-const config = useRuntimeConfig()
 const cartStore = useCartStore()
 const wishlistStore = useWishlistStore()
 const { notify } = useNotify()
+const { url } = useImage()
 
-const imageUrl = computed(() => {
-  if (!props.product.image) return 'https://placehold.co/800x1000'
-  if (props.product.image.startsWith('http')) return props.product.image
-  const baseUrl = config.public.apiUrl.replace('/api', '')
-  return `${baseUrl}/storage/${props.product.image}`
-})
+const imageUrl = computed(() => url(props.product.image))
 
 const price = computed(() => {
   const base = parseFloat(String(props.product.base_price || 0))

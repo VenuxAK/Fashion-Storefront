@@ -132,6 +132,21 @@ export const useCartStore = defineStore('cart', () => {
     }
   }
 
+  const clearCart = async () => {
+    if (!auth.isLoggedIn.value) {
+      items.value = []
+      localStorage.removeItem('cart')
+      return
+    }
+
+    try {
+      await api('/cart', { method: 'DELETE' })
+      items.value = []
+    } catch (error) {
+      console.error('Failed to clear cart', error)
+    }
+  }
+
   return {
     items,
     subtotal,
@@ -139,6 +154,7 @@ export const useCartStore = defineStore('cart', () => {
     fetchCart,
     addToCart,
     updateQuantity,
-    removeItem
+    removeItem,
+    clearCart
   }
 })

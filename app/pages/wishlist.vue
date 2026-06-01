@@ -15,13 +15,8 @@ const addToCart = (product: any) => {
   notify(`Added ${product.name} to cart.`, 'success')
 }
 
-const config = useRuntimeConfig()
-const getImageUrl = (image: string) => {
-  if (!image) return 'https://placehold.co/100'
-  if (image.startsWith('http')) return image
-  const baseUrl = config.public.apiUrl.replace('/api', '')
-  return `${baseUrl}/storage/${image}`
-}
+const { url } = useImage()
+const getImageUrl = (image: string) => url(image)
 
 onMounted(() => {
   wishlistStore.loadWishlist()

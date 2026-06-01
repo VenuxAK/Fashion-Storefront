@@ -17,30 +17,51 @@ const { data: productData, error } = await useAsyncData(
 
 const product = computed(() => productData.value?.data || null)
 
-// UI State
 const quantity = ref(1)
 const selectedSize = ref('')
 const selectedColor = ref('')
 const activeTab = ref('description')
+const selectedImageIndex = ref(0)
 
-const config = useRuntimeConfig()
-const imageUrl = computed(() => {
-  if (!product.value?.image) return 'https://placehold.co/800x1000'
-  if (product.value.image.startsWith('http')) return product.value.image
-  const baseUrl = config.public.apiUrl.replace('/api', '')
-  return `${baseUrl}/storage/${product.value.image}`
+const { url } = useImage()
+
+// Gallery: collect unique images from product + variants
+const allImages = computed<string[]>(() => {
+  const imgs: string[] = []
+  if (product.value?.image) imgs.push(url(product.value.image))
+  product.value?.variants?.forEach(v => {
+    const img = v.image ? url(v.image) : null
+    if (img && !imgs.includes(img)) imgs.push(img)
+  })
+  return imgs.length ? imgs : ['https://placehold.co/800x1000/eee/999?text=No+Image']
+})
+
+const selectedImage = computed(() => allImages.value[selectedImageIndex.value] || allImages.value[0])
+
+// Variant: extract real sizes/colors from API data
+const sizes = computed(() => {
+  const set = new Set(product.value?.variants?.map(v => v.size).filter(Boolean) as string[])
+  return [...set]
+})
+
+const colors = computed(() => {
+  const set = new Set(product.value?.variants?.map(v => v.color).filter(Boolean) as string[])
+  return [...set]
+})
+
+const selectedVariant = computed(() => {
+  return product.value?.variants?.find(v =>
+    (!selectedSize.value || v.size === selectedSize.value) &&
+    (!selectedColor.value || v.color === selectedColor.value)
+  ) || product.value?.variants?.[0]
 })
 
 const increment = () => quantity.value++
 const decrement = () => quantity.value > 1 && quantity.value--
 
 const addToCart = () => {
-  if (!product.value) return
-  
-  // Find a suitable variant if multiple exist, or just use the first one for now
-  const variant = product.value.variants?.[0] || { id: product.value.id, price: product.value.base_price }
-  
-  cartStore.addToCart(product.value, variant, quantity.value)
+  if (!product.value || !selectedVariant.value) return
+  cartStore.addToCart(product.value, selectedVariant.value, quantity.value)
   notify(`Added ${quantity.value} ${product.value.name} to cart.`, 'success')
 }
 
@@ -51,7 +72,7 @@ const toggleWishlist = () => {
     name: product.value.name,
     slug: product.value.slug,
     price: parseFloat(String(product.value.base_price)),
-    image: product.value.image,
+    image: allImages.value[0] || product.value.image,
     category: product.value.category?.name
   })
   const action = wishlistStore.isInWishlist(product.value.id) ? 'added to' : 'removed from'
@@ -85,19 +106,24 @@ watch(product, (newVal) => {
       <!-- Gallery -->
       <div class="space-y-6">
         <div class="aspect-[3/4] bg-gray-50 overflow-hidden relative group">
-          <img 
-            :src="imageUrl" 
-            :alt="product.name" 
+          <img
+            :src="selectedImage"
+            :alt="product.name"
             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          >
-          <div class="absolute inset-0 flex items-center justify-between px-4 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button class="bg-white/80 p-3 hover:bg-white"><ChevronLeft class="w-5 h-5" /></button>
-            <button class="bg-white/80 p-3 hover:bg-white"><ChevronRight class="w-5 h-5" /></button>
+          />
+          <div v-if="allImages.length > 1" class="absolute inset-0 flex items-center justify-between px-4 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button @click="selectedImageIndex = Math.max(0, selectedImageIndex - 1)" class="bg-white/80 p-3 hover:bg-white"><ChevronLeft class="w-5 h-5" /></button>
+            <button @click="selectedImageIndex = Math.min(allImages.length - 1, selectedImageIndex + 1)" class="bg-white/80 p-3 hover:bg-white"><ChevronRight class="w-5 h-5" /></button>
           </div>
         </div>
-        <div class="grid grid-cols-4 gap-4">
-          <div v-for="i in 4" :key="i" class="aspect-square bg-gray-50 cursor-pointer border-2 transition-colors border-transparent hover:border-accent overflow-hidden">
-            <img :src="imageUrl" class="w-full h-full object-cover opacity-60 hover:opacity-100 transition-opacity">
+        <div v-if="allImages.length > 1" class="grid grid-cols-4 gap-4">
+          <div
+            v-for="(img, i) in allImages" :key="i"
+            @click="selectedImageIndex = i"
+            class="aspect-square bg-gray-50 cursor-pointer border-2 transition-colors overflow-hidden"
+            :class="selectedImageIndex === i ? 'border-accent' : 'border-transparent hover:border-accent/50'"
+          >
+            <img :src="img" class="w-full h-full object-cover" :class="selectedImageIndex !== i ? 'opacity-60 hover:opacity-100' : ''">
           </div>
         </div>
       </div>
@@ -116,46 +142,36 @@ watch(product, (newVal) => {
           </div>
         </div>
 
-        <p class="text-gray-500 leading-loose text-sm">
-          {{ product.description }}
-        </p>
+        <p class="text-gray-500 leading-loose text-sm">{{ product.description }}</p>
 
-        <!-- Variants -->
-        <div class="space-y-8">
+        <!-- Variants (from API data) -->
+        <div v-if="product.variants && product.variants.length > 0" class="space-y-8">
           <!-- Size Selector -->
-          <div v-if="product.variants && product.variants.length > 0" class="space-y-4">
-            <div class="flex justify-between items-center">
-              <span class="text-xs font-bold uppercase tracking-widest">Size: {{ selectedSize || 'Select' }}</span>
-              <button class="text-[10px] font-bold uppercase tracking-widest text-gray-400 border-b border-gray-200">Size Guide</button>
-            </div>
+          <div v-if="sizes.length" class="space-y-4">
+            <span class="text-xs font-bold uppercase tracking-widest">Size: {{ selectedSize || 'Select' }}</span>
             <div class="flex flex-wrap gap-3">
-              <button 
-                v-for="size in ['XS', 'S', 'M', 'L', 'XL']" 
-                :key="size"
-                @click="selectedSize = size"
+              <button
+                v-for="s in sizes" :key="s"
+                @click="selectedSize = s"
                 class="w-12 h-12 flex items-center justify-center border text-xs font-bold transition-all"
-                :class="[selectedSize === size ? 'bg-primary text-white border-primary' : 'border-gray-100 hover:border-primary']"
+                :class="[selectedSize === s ? 'bg-primary text-white border-primary' : 'border-gray-100 hover:border-primary']"
               >
-                {{ size }}
+                {{ s }}
               </button>
             </div>
           </div>
 
           <!-- Color Selector -->
-          <div v-if="product.variants && product.variants.length > 0" class="space-y-4">
+          <div v-if="colors.length" class="space-y-4">
             <span class="text-xs font-bold uppercase tracking-widest">Color: {{ selectedColor || 'Select' }}</span>
-            <div class="flex flex-wrap gap-4">
-              <button 
-                v-for="color in ['White', 'Black', 'Blue']" 
-                :key="color"
-                @click="selectedColor = color"
-                class="w-10 h-10 rounded-full border-2 p-1 transition-all"
-                :class="[selectedColor === color ? 'border-accent' : 'border-transparent']"
+            <div class="flex flex-wrap gap-3">
+              <button
+                v-for="c in colors" :key="c"
+                @click="selectedColor = c"
+                class="px-5 h-10 flex items-center justify-center border text-xs font-bold transition-all"
+                :class="[selectedColor === c ? 'bg-primary text-white border-primary' : 'border-gray-100 hover:border-primary']"
               >
-                <div 
-                  class="w-full h-full rounded-full" 
-                  :class="[color === 'White' ? 'bg-white border border-gray-100' : color === 'Black' ? 'bg-black' : 'bg-blue-600']"
-                ></div>
+                {{ c }}
               </button>
             </div>
           </div>
@@ -168,13 +184,14 @@ watch(product, (newVal) => {
             <span class="w-10 text-center font-bold">{{ quantity }}</span>
             <button @click="increment" class="px-4 hover:text-accent"><Plus class="w-4 h-4" /></button>
           </div>
-          <button 
-            @click="addToCart" 
+          <button
+            @click="addToCart"
             class="flex-grow bg-primary text-white h-14 text-xs font-bold uppercase tracking-[0.2em] hover:bg-black transition-colors"
+            :disabled="!selectedVariant"
           >
             Add to Cart
           </button>
-          <button 
+          <button
             @click="toggleWishlist"
             class="w-14 h-14 border border-gray-100 flex items-center justify-center hover:bg-gray-50 transition-colors"
             :class="[wishlistStore.isInWishlist(product.id) ? 'text-accent' : 'text-primary']"
@@ -187,7 +204,7 @@ watch(product, (newVal) => {
         <div class="pt-10 border-t border-gray-100 space-y-4">
           <div class="flex items-center text-xs uppercase font-bold tracking-widest">
             <span class="text-gray-400 w-24">SKU:</span>
-            <span>SIMP-{{ product.id }}</span>
+            <span>{{ selectedVariant?.sku || 'SIMP-' + product.id }}</span>
           </div>
           <div class="flex items-center text-xs uppercase font-bold tracking-widest">
             <span class="text-gray-400 w-24">Categories:</span>
@@ -206,9 +223,8 @@ watch(product, (newVal) => {
     <!-- Tabs -->
     <div class="mt-32 border-t border-gray-100 pt-20">
       <div class="flex justify-center space-x-12 mb-12">
-        <button 
-          v-for="tab in ['description', 'additional', 'reviews']" 
-          :key="tab"
+        <button
+          v-for="tab in ['description', 'additional', 'reviews']" :key="tab"
           @click="activeTab = tab"
           class="text-sm font-bold uppercase tracking-[0.2em] transition-all relative pb-2"
           :class="[activeTab === tab ? 'text-primary' : 'text-gray-400 hover:text-primary']"
@@ -217,17 +233,10 @@ watch(product, (newVal) => {
           <span v-if="activeTab === tab" class="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></span>
         </button>
       </div>
-      
       <div class="max-w-4xl mx-auto text-gray-500 leading-loose text-sm text-center">
-        <div v-if="activeTab === 'description'">
-          {{ product.description }}
-        </div>
-        <div v-else-if="activeTab === 'additional'">
-          No additional information available at this time.
-        </div>
-        <div v-else-if="activeTab === 'reviews'">
-          Currently there are no reviews for this product.
-        </div>
+        <div v-if="activeTab === 'description'">{{ product.description }}</div>
+        <div v-else-if="activeTab === 'additional'">No additional information available at this time.</div>
+        <div v-else-if="activeTab === 'reviews'">Currently there are no reviews for this product.</div>
       </div>
     </div>
   </div>

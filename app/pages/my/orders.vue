@@ -9,6 +9,7 @@ const { getOrders } = useProfile()
 const { data: ordersData, pending } = await useAsyncData('my-orders', () => getOrders())
 
 const orders = computed(() => ordersData.value?.data || [])
+const { url } = useImage()
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -44,7 +45,7 @@ const getStatusColor = (status: string) => {
           >
             <div class="flex items-center space-x-8 w-full md:w-auto">
               <div class="w-16 h-20 bg-gray-50 flex-shrink-0">
-                <img v-if="order.items?.[0]?.variant?.product?.image" :src="order.items[0].variant.product.image" class="w-full h-full object-cover">
+                <img v-if="order.items?.[0]?.variant?.product?.image" :src="url(order.items[0].variant.product.image)" class="w-full h-full object-cover">
               </div>
               <div class="space-y-1">
                 <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400">{{ order.order_number }}</p>

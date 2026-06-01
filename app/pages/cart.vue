@@ -4,13 +4,8 @@ import { useCartStore } from '~/stores/cart'
 
 const cartStore = useCartStore()
 
-const config = useRuntimeConfig()
-const getImageUrl = (image: string) => {
-  if (!image) return 'https://placehold.co/100'
-  if (image.startsWith('http')) return image
-  const baseUrl = config.public.apiUrl.replace('/api', '')
-  return `${baseUrl}/storage/${image}`
-}
+const { url } = useImage()
+const getImageUrl = (image: string) => url(image)
 
 onMounted(() => {
   cartStore.fetchCart()
@@ -88,7 +83,7 @@ useSeoMeta({
               <ArrowLeft class="w-4 h-4" />
               <span>Continue Shopping</span>
             </NuxtLink>
-            <button @click="cartStore.items = []; localStorage.removeItem('cart')" class="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-red-500 transition-colors">
+            <button @click="cartStore.clearCart()" class="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-red-500 transition-colors">
               Clear Shopping Cart
             </button>
           </div>
