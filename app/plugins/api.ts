@@ -1,31 +1,25 @@
 export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig()
-  const token = useCookie('token')
-  
+
   const api = $fetch.create({
     baseURL: config.public.apiUrl,
+    credentials: 'include',
     headers: {
       'Accept': 'application/json',
-      'X-Store': config.public.storeSlug
-    },
-    async onRequest({ options }) {
-      if (token.value) {
-        options.headers = {
-          ...options.headers,
-          Authorization: `Bearer ${token.value}`
-        }
-      }
+      'X-Store': config.public.storeSlug,
     },
     onResponseError({ response }) {
       if (response.status === 401) {
-        token.value = null
+        const auth = useAuth()
+        auth.logout()
+        navigateTo('/login')
       }
-    }
+    },
   })
 
   return {
     provide: {
-      api
-    }
+      api,
+    },
   }
 })

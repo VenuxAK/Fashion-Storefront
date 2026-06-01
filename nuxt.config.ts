@@ -12,8 +12,24 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/google-fonts',
     '@nuxtjs/i18n',
-    '@pinia/nuxt'
+    '@pinia/nuxt',
+    'nuxt-auth-sanctum'
   ],
+
+  sanctum: {
+    baseUrl: process.env.NUXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:8000',
+    endpoints: {
+      csrf: '/sanctum/csrf-cookie',
+      login: '/api/customer/login',
+      logout: '/api/customer/logout',
+      user: '/api/customer/me',
+    },
+    redirect: {
+      onLogin: '/',
+      onLogout: '/login',
+      onUnauthenticated: '/login',
+    },
+  },
 
   vite: {
     plugins: [

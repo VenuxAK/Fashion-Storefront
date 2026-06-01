@@ -1,64 +1,35 @@
 export const useAuth = () => {
-  const api = useApi()
-  const user = useState('user', () => null)
-  const token = useCookie('token')
+  const sanctum = useSanctumAuth()
+  const user = sanctum.user as Ref<any>
+  const isLoggedIn = computed(() => !!user.value)
 
   const login = async (credentials: any) => {
-    try {
-      const response: any = await api('/customer/login', {
-        method: 'POST',
-        body: credentials
-      })
-      user.value = response.customer
-      token.value = response.token
-      return response
-    } catch (error) {
-      throw error
-    }
+    await sanctum.login(credentials)
+    return { customer: user.value }
   }
 
   const register = async (data: any) => {
-    try {
-      const response: any = await api('/customer/register', {
-        method: 'POST',
-        body: data
-      })
-      user.value = response.customer
-      token.value = response.token
-      return response
-    } catch (error) {
-      throw error
-    }
+    const api = useApi()
+    const response: any = await api('/customer/register', { method: 'POST', body: data })
+    user.value = response.customer
+    return response
   }
 
   const logout = async () => {
-    try {
-      await api('/customer/logout', { method: 'POST' })
-    } finally {
-      user.value = null
-      token.value = null
-      navigateTo('/login')
-    }
+    await sanctum.logout()
+    navigateTo('/login')
   }
 
   const fetchUser = async () => {
-    if (!token.value) return
-    try {
-      const response: any = await api('/customer/me')
-      user.value = response.data
-    } catch (error) {
-      user.value = null
-      token.value = null
-    }
+    await sanctum.fetchUser()
   }
 
   return {
     user,
-    token,
     login,
     register,
     logout,
     fetchUser,
-    isLoggedIn: computed(() => !!user.value)
+    isLoggedIn,
   }
 }
