@@ -38,10 +38,11 @@ const getStatusColor = (status: string) => {
         </div>
 
         <div v-else-if="orders.length > 0" class="space-y-6">
-          <div 
-            v-for="order in orders" 
+          <NuxtLink
+            v-for="order in orders"
             :key="order.id"
-            class="border border-gray-100 p-8 flex flex-col md:flex-row justify-between items-center gap-8 hover:shadow-md transition-shadow group cursor-pointer"
+            :to="`/my/orders/${order.id}`"
+            class="block border border-gray-100 p-8 flex flex-col md:flex-row justify-between items-center gap-8 hover:shadow-md transition-shadow group"
           >
             <div class="flex items-center space-x-8 w-full md:w-auto">
               <div class="w-16 h-20 bg-gray-50 flex-shrink-0">
@@ -59,7 +60,7 @@ const getStatusColor = (status: string) => {
                 <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Total</p>
                 <p class="text-sm font-bold">${{ parseFloat(order.total_amount).toFixed(2) }}</p>
               </div>
-              
+
               <div class="text-center">
                 <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Status</p>
                 <span class="text-[8px] font-bold uppercase px-3 py-1 rounded-full" :class="getStatusColor(order.status)">
@@ -69,7 +70,7 @@ const getStatusColor = (status: string) => {
 
               <ChevronRight class="w-5 h-5 text-gray-300 group-hover:text-primary transition-colors" />
             </div>
-          </div>
+          </NuxtLink>
         </div>
 
         <div v-else class="py-32 flex flex-col items-center justify-center text-center space-y-8 bg-gray-50 border border-dashed border-gray-200">
