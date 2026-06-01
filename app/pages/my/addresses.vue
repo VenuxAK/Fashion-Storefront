@@ -2,7 +2,7 @@
 import { MapPin, Plus, Trash2, CheckCircle } from 'lucide-vue-next'
 
 definePageMeta({
-  middleware: 'auth'
+  middleware: 'sanctum:auth'
 })
 
 const { getAddresses, createAddress } = useCheckout() // Reusing from useCheckout

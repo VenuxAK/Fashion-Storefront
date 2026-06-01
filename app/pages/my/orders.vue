@@ -2,7 +2,7 @@
 import { Search, ChevronRight } from 'lucide-vue-next'
 
 definePageMeta({
-  middleware: 'auth'
+  middleware: 'sanctum:auth'
 })
 
 const { getOrders } = useProfile()
