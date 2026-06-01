@@ -61,7 +61,6 @@ const handleLogin = async () => {
             <input type="checkbox" class="accent-primary">
             <span>Remember Me</span>
           </label>
-          <NuxtLink to="/forgot-password" class="text-gray-400 hover:text-accent">Forgot Password?</NuxtLink>
         </div>
 
         <button 

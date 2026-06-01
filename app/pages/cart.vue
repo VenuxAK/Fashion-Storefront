@@ -114,18 +114,6 @@ useSeoMeta({
               Proceed to Checkout
             </NuxtLink>
           </div>
-          
-          <div class="border border-gray-100 p-10 space-y-4">
-            <h4 class="text-xs font-bold uppercase tracking-widest">Apply Discount Code</h4>
-            <form @submit.prevent class="flex">
-              <input 
-                type="text" 
-                placeholder="Enter code" 
-                class="flex-grow border-b border-gray-200 focus:border-accent outline-none py-3 text-sm"
-              >
-              <button class="text-[10px] font-bold uppercase tracking-widest text-accent ml-4">Apply</button>
-            </form>
-          </div>
         </div>
       </div>
 
