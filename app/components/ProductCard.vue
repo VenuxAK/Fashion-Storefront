@@ -30,14 +30,27 @@ const { url } = useImage()
 
 const imageUrl = computed(() => url(props.product.image))
 
+const totalStock = computed(() => {
+  return (props.product.variants || []).reduce((sum, v) => sum + (v.stock_quantity || 0), 0)
+})
+
+const hasStock = computed(() => totalStock.value > 0)
+
+const defaultVariant = computed(() => {
+  return (props.product.variants || []).find(v => (v.stock_quantity || 0) > 0)
+    || props.product.variants?.[0]
+    || { id: props.product.id, price_adjustment: 0, stock_quantity: 0 }
+})
+
 const price = computed(() => {
   const base = parseFloat(String(props.product.base_price || 0))
-  const adjustment = parseFloat(String(props.product.variants?.[0]?.price_adjustment || 0))
+  const adjustment = parseFloat(String(defaultVariant.value?.price_adjustment || 0))
   return base + adjustment
 })
 
 const addToCart = async () => {
-  const variant = props.product.variants?.[0] || { id: props.product.id, price: props.product.base_price }
+  if (!hasStock.value) return
+  const variant = defaultVariant.value
   try {
     await cartStore.addToCart(props.product, variant, 1)
     notify(`Added ${props.product.name} to cart.`, 'success')
@@ -86,7 +99,7 @@ const toggleWishlist = () => {
 
       <!-- Actions Overlay (Grid Only) -->
       <div v-if="view === 'grid'" class="absolute bottom-0 left-0 w-full p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex justify-center space-x-2 z-20">
-        <button @click="addToCart" class="bg-white text-primary p-3 hover:bg-primary hover:text-white transition-colors shadow-sm">
+        <button @click="addToCart" class="bg-white text-primary p-3 hover:bg-primary hover:text-white transition-colors shadow-sm disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!hasStock">
           <ShoppingBag class="w-4 h-4" />
         </button>
         <button 
@@ -112,16 +125,13 @@ const toggleWishlist = () => {
       </h3>
       <p v-if="view === 'list'" class="text-sm text-gray-500 line-clamp-2 max-w-xl">{{ product.description }}</p>
       <p class="text-sm font-bold text-gray-700">${{ price.toFixed(2) }}</p>
-      <p v-if="product.variants?.[0]?.stock_quantity !== undefined" class="text-[10px] uppercase tracking-widest" :class="product.variants[0].stock_quantity > 0 ? 'text-green-600' : 'text-red-500'">
-        {{ product.variants[0].stock_quantity > 0 ? product.variants[0].stock_quantity + ' in stock' : 'Out of stock' }}
-      </p>
-      <p v-if="product.variants?.[0]?.stock_quantity !== undefined" class="text-[10px] uppercase tracking-widest" :class="product.variants[0].stock_quantity > 0 ? 'text-green-600' : 'text-red-500'">
-        {{ product.variants[0].stock_quantity > 0 ? product.variants[0].stock_quantity + ' in stock' : 'Out of stock' }}
+      <p class="text-[10px] uppercase tracking-widest" :class="hasStock ? 'text-green-600' : 'text-red-500'">
+        {{ hasStock ? totalStock + ' in stock' : 'Out of stock' }}
       </p>
       
       <!-- Actions (List Only) -->
       <div v-if="view === 'list'" class="flex items-center space-x-4 pt-4">
-        <button @click="addToCart" class="btn btn-primary px-8 py-3 text-xs font-bold uppercase tracking-widest">Add to Cart</button>
+        <button @click="addToCart" class="btn btn-primary px-8 py-3 text-xs font-bold uppercase tracking-widest disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!hasStock">{{ hasStock ? 'Add to Cart' : 'Out of Stock' }}</button>
         <button 
           @click="toggleWishlist" 
           class="w-12 h-12 border border-gray-100 flex items-center justify-center hover:bg-gray-50 transition-colors"

@@ -55,7 +55,9 @@ const needsSelection = computed(() => {
 
 const selectedVariant = computed(() => {
   if (!product.value?.variants?.length) return null
-  if (!needsSelection.value) return product.value.variants[0]
+  if (!needsSelection.value) {
+    return product.value.variants.find(v => (v.stock_quantity || 0) > 0) || product.value.variants[0]
+  }
   return product.value.variants.find(v =>
     (!selectedSize.value || v.size === selectedSize.value) &&
     (!selectedColor.value || v.color === selectedColor.value)
@@ -64,6 +66,10 @@ const selectedVariant = computed(() => {
 
 const increment = () => quantity.value++
 const decrement = () => quantity.value > 1 && quantity.value--
+
+const canAddToCart = computed(() => {
+  return !!selectedVariant.value && (selectedVariant.value.stock_quantity || 0) > 0
+})
 
 const addToCart = async () => {
   if (!product.value || !selectedVariant.value) return
@@ -198,9 +204,9 @@ watch(product, (newVal) => {
           <button
             @click="addToCart"
             class="flex-grow bg-primary text-white h-14 text-xs font-bold uppercase tracking-[0.2em] hover:bg-black transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-            :disabled="!selectedVariant && needsSelection"
+            :disabled="!canAddToCart"
           >
-            {{ !selectedVariant && needsSelection ? 'Select Size / Color' : !selectedVariant ? 'Unavailable' : 'Add to Cart' }}
+            {{ !selectedVariant ? 'Select Size / Color' : !canAddToCart ? 'Out of Stock' : 'Add to Cart' }}
           </button>
           <button
             @click="toggleWishlist"
