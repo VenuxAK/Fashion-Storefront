@@ -37,3 +37,6 @@
     @apply border-primary text-primary hover:bg-primary hover:text-white;
   }
 }
+button, a {
+  @apply cursor-pointer;
+}

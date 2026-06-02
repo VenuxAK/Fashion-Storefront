@@ -61,9 +61,15 @@ export const useCartStore = defineStore('cart', () => {
       const basePrice = parseFloat(String(product?.base_price || 0))
       const adjustment = parseFloat(String(variant?.price_adjustment || 0))
       const price = isNaN(basePrice + adjustment) ? 0 : (basePrice + adjustment)
+      const available = variant?.stock_quantity ?? 99
+      const currentQty = existing?.quantity || 0
+
+      if (currentQty + quantity > available) {
+        throw new Error(`Insufficient stock. Available: ${available}.`)
+      }
 
       if (existing) {
-        existing.quantity += quantity
+        existing.quantity = currentQty + quantity
       } else {
         items.value.push({
           variant_id: variant.id,
@@ -88,8 +94,9 @@ export const useCartStore = defineStore('cart', () => {
         }
       })
       await fetchCart()
-    } catch (error) {
-      console.error('Failed to add to cart', error)
+    } catch (error: any) {
+      const message = error?.data?.message || error?.message || 'Failed to add to cart'
+      throw new Error(message)
     }
   }
 
@@ -147,6 +154,22 @@ export const useCartStore = defineStore('cart', () => {
     }
   }
 
+  const syncCart = async () => {
+    const saved = localStorage.getItem('cart')
+    if (!saved) return
+    try {
+      const localItems = JSON.parse(saved)
+      for (const item of localItems) {
+        await api('/cart', {
+          method: 'POST',
+          body: { product_variant_id: item.variant_id, quantity: item.quantity },
+        }).catch(() => {})
+      }
+    } catch {}
+    localStorage.removeItem('cart')
+    await fetchCart()
+  }
+
   return {
     items,
     subtotal,
@@ -155,6 +178,7 @@ export const useCartStore = defineStore('cart', () => {
     addToCart,
     updateQuantity,
     removeItem,
-    clearCart
+    clearCart,
+    syncCart,
   }
 })

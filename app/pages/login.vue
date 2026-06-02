@@ -1,5 +1,7 @@
 <script setup lang="ts">
 const { login } = useAuth()
+const wishlistStore = useWishlistStore()
+const cartStore = useCartStore()
 const form = reactive({
   email: '',
   password: ''
@@ -12,6 +14,8 @@ const handleLogin = async () => {
   error.value = ''
   try {
     await login(form)
+    await wishlistStore.syncWishlist()
+    await cartStore.syncCart()
     navigateTo('/')
   } catch (err: any) {
     error.value = err.data?.message || 'Login failed. Please check your credentials.'

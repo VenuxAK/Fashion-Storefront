@@ -9,9 +9,9 @@ const cartStore = useCartStore()
 const { notify } = useNotify()
 
 const addToCart = (product: any) => {
-  // Simple variant finding or default
-  const variant = { id: product.id, price: product.price }
+  const variant = product.variants?.[0] || { id: product.product_id, price: product.price }
   cartStore.addToCart(product, variant, 1)
+  wishlistStore.removeItem(product.product_id)
   notify(`Added ${product.name} to cart.`, 'success')
 }
 
@@ -67,7 +67,7 @@ useSeoMeta({
                 Add to Cart
               </button>
               <button 
-                @click="wishlistStore.toggleWishlist(item)"
+                @click="wishlistStore.removeItem(item.product_id)"
                 class="w-14 h-14 border border-gray-100 flex items-center justify-center text-gray-300 hover:text-red-500 hover:bg-red-50 transition-all"
               >
                 <Trash2 class="w-5 h-5" />

@@ -1,5 +1,7 @@
 <script setup lang="ts">
 const { register } = useAuth()
+const wishlistStore = useWishlistStore()
+const cartStore = useCartStore()
 const form = reactive({
   name: '',
   email: '',
@@ -15,6 +17,8 @@ const handleRegister = async () => {
   error.value = ''
   try {
     await register(form)
+    await wishlistStore.syncWishlist()
+    await cartStore.syncCart()
     navigateTo('/')
   } catch (err: any) {
     error.value = err.data?.message || 'Registration failed. Please check your details.'

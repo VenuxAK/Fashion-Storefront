@@ -65,14 +65,19 @@ const selectedVariant = computed(() => {
 const increment = () => quantity.value++
 const decrement = () => quantity.value > 1 && quantity.value--
 
-const addToCart = () => {
+const addToCart = async () => {
   if (!product.value || !selectedVariant.value) return
-  cartStore.addToCart(product.value, selectedVariant.value, quantity.value)
-  notify(`Added ${quantity.value} ${product.value.name} to cart.`, 'success')
+  try {
+    await cartStore.addToCart(product.value, selectedVariant.value, quantity.value)
+    notify(`Added ${quantity.value} ${product.value.name} to cart.`, 'success')
+  } catch (err: any) {
+    notify(err.message || 'Failed to add to cart.', 'error')
+  }
 }
 
 const toggleWishlist = () => {
   if (!product.value) return
+  const wasInWishlist = wishlistStore.isInWishlist(product.value.id)
   wishlistStore.toggleWishlist({
     id: product.value.id,
     name: product.value.name,
@@ -81,7 +86,7 @@ const toggleWishlist = () => {
     image: allImages.value[0] || product.value.image,
     category: product.value.category?.name
   })
-  const action = wishlistStore.isInWishlist(product.value.id) ? 'added to' : 'removed from'
+  const action = wasInWishlist ? 'removed from' : 'added to'
   notify(`Product ${action} wishlist.`, 'success')
 }
 
@@ -211,6 +216,12 @@ watch(product, (newVal) => {
           <div class="flex items-center text-xs uppercase font-bold tracking-widest">
             <span class="text-gray-400 w-24">SKU:</span>
             <span>{{ selectedVariant?.sku || 'SIMP-' + product.id }}</span>
+          </div>
+          <div v-if="selectedVariant" class="flex items-center text-xs uppercase font-bold tracking-widest">
+            <span class="text-gray-400 w-24">Stock:</span>
+            <span :class="selectedVariant.stock_quantity > 0 ? 'text-green-600' : 'text-red-500'">
+              {{ selectedVariant.stock_quantity > 0 ? selectedVariant.stock_quantity + ' available' : 'Out of stock' }}
+            </span>
           </div>
           <div class="flex items-center text-xs uppercase font-bold tracking-widest">
             <span class="text-gray-400 w-24">Categories:</span>

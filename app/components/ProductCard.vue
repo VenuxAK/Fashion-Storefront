@@ -36,13 +36,18 @@ const price = computed(() => {
   return base + adjustment
 })
 
-const addToCart = () => {
+const addToCart = async () => {
   const variant = props.product.variants?.[0] || { id: props.product.id, price: props.product.base_price }
-  cartStore.addToCart(props.product, variant, 1)
-  notify(`Added ${props.product.name} to cart.`, 'success')
+  try {
+    await cartStore.addToCart(props.product, variant, 1)
+    notify(`Added ${props.product.name} to cart.`, 'success')
+  } catch (err: any) {
+    notify(err.message || 'Failed to add to cart.', 'error')
+  }
 }
 
 const toggleWishlist = () => {
+  const wasInWishlist = wishlistStore.isInWishlist(props.product.id)
   wishlistStore.toggleWishlist({
     id: props.product.id,
     name: props.product.name,
@@ -51,7 +56,7 @@ const toggleWishlist = () => {
     image: props.product.image,
     category: props.product.category?.name
   })
-  const action = wishlistStore.isInWishlist(props.product.id) ? 'added to' : 'removed from'
+  const action = wasInWishlist ? 'removed from' : 'added to'
   notify(`Product ${action} wishlist.`, 'success')
 }
 </script>
@@ -61,7 +66,7 @@ const toggleWishlist = () => {
     <!-- Image Area -->
     <div 
       class="relative bg-gray-50 overflow-hidden"
-      :class="[view === 'grid' ? 'aspect-[3/4] mb-6' : 'w-48 aspect-[3/4] flex-shrink-0']"
+      :class="[view === 'grid' ? 'aspect-3/4 mb-6' : 'w-48 aspect-3/4 shrink-0']"
     >
       <!-- Badges -->
       <div class="absolute top-4 left-4 z-10 flex flex-col space-y-2">
@@ -98,7 +103,7 @@ const toggleWishlist = () => {
     </div>
 
     <!-- Info Area -->
-    <div :class="[view === 'grid' ? 'text-center space-y-1' : 'flex-grow space-y-4 text-left']">
+    <div :class="[view === 'grid' ? 'text-center space-y-1' : 'grow space-y-4 text-left']">
       <p v-if="product.category" class="text-[10px] text-gray-400 uppercase tracking-[0.2em]">{{ product.category.name }}</p>
       <h3 class="text-sm font-medium uppercase tracking-widest">
         <NuxtLink :to="`/products/${product.slug}`" class="hover:text-accent transition-colors">
@@ -107,6 +112,12 @@ const toggleWishlist = () => {
       </h3>
       <p v-if="view === 'list'" class="text-sm text-gray-500 line-clamp-2 max-w-xl">{{ product.description }}</p>
       <p class="text-sm font-bold text-gray-700">${{ price.toFixed(2) }}</p>
+      <p v-if="product.variants?.[0]?.stock_quantity !== undefined" class="text-[10px] uppercase tracking-widest" :class="product.variants[0].stock_quantity > 0 ? 'text-green-600' : 'text-red-500'">
+        {{ product.variants[0].stock_quantity > 0 ? product.variants[0].stock_quantity + ' in stock' : 'Out of stock' }}
+      </p>
+      <p v-if="product.variants?.[0]?.stock_quantity !== undefined" class="text-[10px] uppercase tracking-widest" :class="product.variants[0].stock_quantity > 0 ? 'text-green-600' : 'text-red-500'">
+        {{ product.variants[0].stock_quantity > 0 ? product.variants[0].stock_quantity + ' in stock' : 'Out of stock' }}
+      </p>
       
       <!-- Actions (List Only) -->
       <div v-if="view === 'list'" class="flex items-center space-x-4 pt-4">
