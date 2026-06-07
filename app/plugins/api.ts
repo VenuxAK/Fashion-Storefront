@@ -4,15 +4,17 @@ export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig()
   const apiBase = config.public.apiUrl as string
 
+  const storeSlug = config.public.storeSlug as string
+
   const api = $fetch.create({
     baseURL: apiBase,
     credentials: 'include',
-    headers: {
-      'Accept': 'application/json',
-      'X-Store': config.public.storeSlug as string,
-    },
     async onRequest({ request, options }) {
       const method = (options.method || 'GET').toUpperCase()
+
+      // Always send X-Store header for store scoping.
+      options.headers = { ...options.headers, 'X-Store': storeSlug }
+
       if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
         if (!csrfFetched) {
           await $fetch(`${apiBase.replace('/api', '')}/sanctum/csrf-cookie`, {

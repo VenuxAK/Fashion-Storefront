@@ -16,8 +16,21 @@ export default defineNuxtConfig({
     'nuxt-auth-sanctum'
   ],
 
+  vite: {
+    plugins: [
+      tailwindcss()
+    ],
+    server: {
+      proxy: {
+        '/api': { target: 'http://localhost:8000', changeOrigin: true },
+        '/sanctum': { target: 'http://localhost:8000', changeOrigin: true },
+        '/storage': { target: 'http://localhost:8000', changeOrigin: true },
+      },
+    },
+  },
+
   sanctum: {
-    baseUrl: process.env.NUXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:8000',
+    baseUrl: 'http://localhost:3000',
     endpoints: {
       csrf: '/sanctum/csrf-cookie',
       login: '/api/customer/login',
@@ -29,12 +42,6 @@ export default defineNuxtConfig({
       onLogout: '/login',
       onUnauthenticated: '/login',
     },
-  },
-
-  vite: {
-    plugins: [
-      tailwindcss()
-    ]
   },
 
   googleFonts: {
@@ -62,7 +69,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiUrl: process.env.NUXT_PUBLIC_API_URL || 'http://localhost:8000/api',
+      apiUrl: process.env.NUXT_PUBLIC_API_URL || '/api',
       storeSlug: process.env.NUXT_PUBLIC_STORE_SLUG || 'clothing'
     }
   },
