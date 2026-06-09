@@ -23,6 +23,18 @@ const handleLogin = async () => {
     isLoading.value = false
   }
 }
+
+const handleGoogleLogin = async () => {
+  try {
+    const api = useApi()
+    const response: any = await api('/auth/oauth/google/redirect')
+    if (response.redirect_url) {
+      window.location.href = response.redirect_url
+    }
+  } catch (err) {
+    error.value = 'Failed to initialize Google login. Please try again later.'
+  }
+}
 </script>
 
 <template>
@@ -79,11 +91,8 @@ const handleLogin = async () => {
       <div class="text-center space-y-6">
         <p class="text-xs text-gray-400 uppercase tracking-widest font-bold">Or login with</p>
         <div class="flex justify-center space-x-4">
-          <button class="w-12 h-12 border border-gray-100 flex items-center justify-center hover:bg-gray-50 transition-colors">
+          <button @click="handleGoogleLogin" class="w-12 h-12 border border-gray-100 flex items-center justify-center hover:bg-gray-50 transition-colors">
             <img src="https://www.svgrepo.com/show/355037/google.svg" class="w-5 h-5">
-          </button>
-          <button class="w-12 h-12 border border-gray-100 flex items-center justify-center hover:bg-gray-50 transition-colors">
-            <img src="https://www.svgrepo.com/show/303114/facebook-3-logo.svg" class="w-5 h-5">
           </button>
         </div>
         <p class="text-xs text-gray-400 uppercase tracking-widest font-bold pt-6">
