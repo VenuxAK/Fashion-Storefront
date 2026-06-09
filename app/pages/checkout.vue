@@ -13,6 +13,7 @@ const isAddingAddress = ref(false)
 const isLoading = ref(false)
 const isPlacingOrder = ref(false)
 const orderNotes = ref('')
+const idempotencyKey = ref(crypto.randomUUID())
 
 const newAddress = reactive({
   type: 'shipping',
@@ -71,11 +72,10 @@ const handlePlaceOrder = async () => {
     const response: any = await placeOrder({
       address_id: selectedAddressId.value,
       notes: orderNotes.value
-    })
+    }, idempotencyKey.value)
     
-    // Clear local cart
-    cartStore.items = []
-    localStorage.removeItem('cart')
+    // Clear local cart (backend clears it on their side during checkout)
+    cartStore.resetLocalCart()
     
     // Redirect to success page
     const orderNumber = response.order?.order_number || response.data?.order_number

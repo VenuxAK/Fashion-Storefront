@@ -2,13 +2,14 @@ let csrfFetched = false
 
 export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig()
-  const apiBase = config.public.apiUrl as string
+  const apiBase = import.meta.server ? 'http://localhost:8000/api' : (config.public.apiUrl as string)
 
   const storeSlug = config.public.storeSlug as string
 
   const api = $fetch.create({
     baseURL: apiBase,
     credentials: 'include',
+    timeout: 15000, // 15 seconds to match backend
     async onRequest({ request, options }) {
       const method = (options.method || 'GET').toUpperCase()
 
@@ -31,9 +32,18 @@ export default defineNuxtPlugin(() => {
         }
       }
     },
+    onRequestError({ error }) {
+      if (error.name === 'AbortError' || error.message?.includes('timeout')) {
+        const { notify } = useNotify()
+        notify('The server took too long to respond. Please try again.', 'error')
+      }
+    },
     onResponseError({ response }) {
       if (response.status === 401) {
         navigateTo('/login')
+      } else if (response.status === 503 || response.status === 504) {
+        const { notify } = useNotify()
+        notify('Service temporarily unavailable. Please try again later.', 'error')
       }
     },
   })

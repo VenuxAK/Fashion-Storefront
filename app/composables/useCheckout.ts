@@ -16,10 +16,11 @@ export const useCheckout = () => {
     return await api('/checkout/validate')
   }
 
-  const placeOrder = async (data: { address_id: number, notes?: string }) => {
+  const placeOrder = async (data: { address_id: number, notes?: string }, idempotencyKey?: string) => {
     return await api('/checkout', {
       method: 'POST',
-      body: data
+      body: data,
+      headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined
     })
   }
 

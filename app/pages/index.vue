@@ -11,9 +11,13 @@ const { data: categoriesData } = await useAsyncData('categories', () =>
   getCategories()
 )
 
-const featuredProducts = computed(() => productsData.value?.data || [])
+const featuredProducts = computed(() => {
+  const raw = productsData.value?.data || productsData.value || []
+  return Array.isArray(raw) ? raw : []
+})
 const categories = computed(() => {
-  const cats = categoriesData.value?.data || []
+  const raw = categoriesData.value?.data || categoriesData.value || []
+  const cats = Array.isArray(raw) ? raw : []
   const placeholders = [
     'https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?q=80&w=400&auto=format&fit=crop', // Men
     'https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=400&auto=format&fit=crop', // Women

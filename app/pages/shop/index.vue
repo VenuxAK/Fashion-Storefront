@@ -25,8 +25,14 @@ const { data: productsData, refresh: refreshProducts } = await useAsyncData(
 
 const { data: categoriesData } = await useAsyncData('shop-categories', () => getCategories())
 
-const products = computed(() => productsData.value?.data || [])
-const categories = computed(() => categoriesData.value?.data || [])
+const products = computed(() => {
+  const raw = productsData.value?.data || productsData.value || []
+  return Array.isArray(raw) ? raw : []
+})
+const categories = computed(() => {
+  const raw = categoriesData.value?.data || categoriesData.value || []
+  return Array.isArray(raw) ? raw : []
+})
 const pagination = computed(() => productsData.value?.meta || {})
 
 const setCategory = (id: string | number) => {
