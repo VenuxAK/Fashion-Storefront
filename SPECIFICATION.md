@@ -1,7 +1,6 @@
 # Clothing Storefront — Specification
 
-> Nuxt 4 SSR e-commerce storefront consuming the SimpCommerce API.  
-> See `MD/PLAN.md` for the improvement roadmap.
+> Nuxt 4 SSR e-commerce storefront consuming the SimpCommerce API.
 
 ---
 
@@ -12,7 +11,7 @@
 | Framework | Nuxt 4 (SSR, auto-imports, file-based routing) |
 | Styling | Tailwind CSS v4 (`@tailwindcss/vite`) |
 | State | Pinia (cart, wishlist, ui) |
-| Auth | Custom Bearer token via `useCookie('token')` |
+| Auth | Sanctum SPA via `nuxt-auth-sanctum` |
 | i18n | `@nuxtjs/i18n` (EN + MY, prefix_except_default) |
 | Fonts | `@nuxtjs/google-fonts` (Poppins, Inter) |
 | Icons | `lucide-vue-next` |
@@ -26,8 +25,8 @@
 |---|---|
 | Base URL | `NUXT_PUBLIC_API_URL` → fallback `http://localhost:8000/api` |
 | Store Header | `X-Store` → `NUXT_PUBLIC_STORE_SLUG` → fallback `clothing` |
-| Auth Header | `Authorization: Bearer <token>` from `useCookie('token')` |
-| 401 Handler | Clears token cookie, no auto-redirect |
+| Auth Header | Sanctum `laravel_session` cookie handled automatically |
+| 401 Handler | Redirects to `/login` via `nuxt-auth-sanctum` |
 
 The API client is created in `plugins/api.ts` as `$fetch.create()` and injected as `$api`. All composables access it via `useApi()` which calls `useNuxtApp().$api`.
 
@@ -66,15 +65,15 @@ The API client is created in `plugins/api.ts` as `$fetch.create()` and injected 
 | `/login` | Login | guest | ✅ |
 | `/register` | Register | guest | ✅ |
 | `/wishlist` | Wishlist | — | ✅ |
-| `/my/orders` | Order History | auth | ⚠️ No detail page |
+| `/my/orders` | Order History | auth | ✅ |
 | `/my/profile` | Profile | auth | ✅ |
 | `/my/addresses` | Address Book | auth | ✅ |
 | `/search` | Search Overlay | — | ✅ (component, not page) |
-| `/about` | About | — | ❌ "Coming Soon" |
-| `/contact` | Contact | — | ❌ "Coming Soon" |
-| `/faq` | FAQ | — | ❌ "Coming Soon" |
-| `/shipping` | Shipping | — | ❌ "Coming Soon" |
-| `/terms` | Terms | — | ❌ "Coming Soon" |
+| `/about` | About | — | ✅ |
+| `/contact` | Contact | — | ✅ |
+| `/faq` | FAQ | — | ✅ |
+| `/shipping` | Shipping | — | ✅ |
+| `/terms` | Terms | — | ✅ |
 
 ---
 
@@ -93,11 +92,10 @@ The API client is created in `plugins/api.ts` as `$fetch.create()` and injected 
 ### UI Store (`stores/ui.ts`)
 - `isMiniCartOpen`, `isSearchOpen` toggles
 
-### Auth (`composables/useAuth.ts`)
-- Token in `useCookie('token')` (NOT HttpOnly)
-- `useState('user')` for SSR-safe user state
-- Methods: `login`, `register`, `logout`, `fetchUser`
-- ⚠️ Plain cookie, XSS-vulnerable. Plan: migrate to `nuxt-auth-sanctum`
+### Auth (`nuxt-auth-sanctum`)
+- Stateful session using Laravel Sanctum and `laravel_session` cookie
+- Use `useSanctumAuth()` for state and `refreshIdentity()`
+- Endpoints: `/sanctum/csrf-cookie`, `/api/customer/login`, `/api/customer/logout`, `/api/customer/me`
 
 ---
 
@@ -121,14 +119,9 @@ The API client is created in `plugins/api.ts` as `$fetch.create()` and injected 
 | # | Issue | Severity |
 |---|---|---|
 | 1 | No `.env` file — hardcoded fallbacks only | High |
-| 2 | Auth token in plain cookie (XSS-vulnerable) | High |
 | 3 | Hardcoded variant selectors on product detail | High |
 | 4 | Fake thumbnail gallery (same image repeated) | Medium |
 | 5 | Image URL resolution copied in 7+ files | Medium |
-| 6 | 5 placeholder pages linked from footer | Medium |
-| 7 | No order detail page | Medium |
 | 8 | Clear Cart directly mutates array (API leak) | Medium |
-| 9 | OAuth buttons decorative only | Low |
 | 10 | No TypeScript types (all `any`) | Low |
 
-Full fix plan: `MD/PLAN.md`
