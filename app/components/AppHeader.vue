@@ -30,7 +30,7 @@ const toggleLocale = () => {
 <template>
   <header 
     class="fixed top-0 left-0 w-full z-50 transition-all duration-300"
-    :class="[isScrolled ? 'bg-white shadow-sm py-3' : 'bg-transparent py-6']"
+    :class="[isScrolled ? 'bg-white shadow-md py-3' : 'bg-transparent py-6']"
   >
     <div class="container flex items-center justify-between">
       <!-- Mobile Menu Toggle -->

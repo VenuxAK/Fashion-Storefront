@@ -5,7 +5,6 @@ const cartStore = useCartStore()
 const form = reactive({
   name: '',
   email: '',
-  phone: '',
   password: '',
   password_confirmation: ''
 })
@@ -63,16 +62,7 @@ const handleRegister = async () => {
           >
         </div>
 
-        <div class="space-y-2">
-          <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Phone Number</label>
-          <input 
-            v-model="form.phone"
-            type="tel" 
-            required
-            class="w-full border-b border-gray-200 focus:border-accent outline-none py-3 text-sm transition-colors"
-            placeholder="09..."
-          >
-        </div>
+
 
         <div class="space-y-2">
           <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Password</label>

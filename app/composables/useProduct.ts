@@ -13,6 +13,10 @@ export const useProduct = () => {
     return await api('/storefront/categories')
   }
 
+  const getBrands = async () => {
+    return await api('/storefront/brands')
+  }
+
   const getStoreSettings = async () => {
     return await api('/storefront/settings')
   }
@@ -21,6 +25,7 @@ export const useProduct = () => {
     getProducts,
     getProductBySlug,
     getCategories,
+    getBrands,
     getStoreSettings
   }
 }

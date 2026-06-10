@@ -75,69 +75,92 @@ const toggleWishlist = () => {
 </script>
 
 <template>
-  <div :class="[view === 'grid' ? 'group' : 'flex gap-10 items-center border-b border-gray-100 pb-10 last:border-none']">
+  <div :class="[
+    view === 'grid' 
+      ? 'group bg-white rounded-xl shadow-[0_1px_3px_rgba(3,0,71,0.09)] overflow-hidden transition-all duration-300 hover:shadow-[0_8px_16px_rgba(3,0,71,0.09)] hover:-translate-y-1' 
+      : 'flex gap-6 items-center bg-white rounded-xl shadow-[0_1px_3px_rgba(3,0,71,0.09)] p-4 transition-all duration-300 hover:shadow-[0_8px_16px_rgba(3,0,71,0.09)]'
+  ]">
     <!-- Image Area -->
     <div 
-      class="relative bg-gray-50 overflow-hidden"
-      :class="[view === 'grid' ? 'aspect-3/4 mb-6' : 'w-48 aspect-3/4 shrink-0']"
+      class="relative bg-white overflow-hidden flex items-center justify-center shrink-0"
+      :class="[view === 'grid' ? 'aspect-[4/3] w-full p-4' : 'w-48 aspect-[4/3] rounded-lg p-2']"
     >
       <!-- Badges -->
-      <div class="absolute top-4 left-4 z-10 flex flex-col space-y-2">
-        <span v-if="product.is_new" class="bg-primary text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1">New</span>
-        <span v-if="product.is_sale" class="bg-accent text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1">Sale</span>
+      <div class="absolute top-3 left-3 z-10 flex flex-col gap-2">
+        <span v-if="product.is_new" class="bg-rose-500 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm shadow-sm">New</span>
+        <span v-if="product.is_sale" class="bg-[#E94560] text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm shadow-sm">Sale</span>
       </div>
 
       <!-- Image -->
-      <NuxtLink :to="`/products/${product.slug}`">
+      <NuxtLink :to="`/products/${product.slug}`" class="w-full h-full flex items-center justify-center">
         <img 
           :src="imageUrl" 
           :alt="product.name" 
           loading="lazy"
-          class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          class="max-w-full max-h-full object-contain transition-transform duration-700 group-hover:scale-105"
         >
       </NuxtLink>
 
       <!-- Actions Overlay (Grid Only) -->
-      <div v-if="view === 'grid'" class="absolute bottom-0 left-0 w-full p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex justify-center space-x-2 z-20">
-        <button @click="addToCart" class="bg-white text-primary p-3 hover:bg-primary hover:text-white transition-colors shadow-sm disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!hasStock">
-          <ShoppingBag class="w-4 h-4" />
-        </button>
+      <div v-if="view === 'grid'" class="absolute right-3 top-3 flex flex-col gap-2 z-20 translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
         <button 
           @click="toggleWishlist" 
-          class="bg-white p-3 hover:bg-primary hover:text-white transition-colors shadow-sm"
-          :class="[wishlistStore.isInWishlist(product.id) ? 'text-accent' : 'text-primary']"
+          class="bg-white/90 backdrop-blur-sm p-2 rounded-full hover:bg-rose-500 hover:text-white transition-colors shadow-sm text-gray-500"
+          :class="[wishlistStore.isInWishlist(product.id) ? 'text-rose-500' : '']"
         >
-          <Heart class="w-4 h-4" :class="{'fill-current': wishlistStore.isInWishlist(product.id)}" />
+          <Heart class="w-4 h-4" :class="{'fill-current text-rose-500': wishlistStore.isInWishlist(product.id)}" />
         </button>
-        <NuxtLink :to="`/products/${product.slug}`" class="bg-white text-primary p-3 hover:bg-primary hover:text-white transition-colors shadow-sm">
+        <NuxtLink :to="`/products/${product.slug}`" class="bg-white/90 backdrop-blur-sm text-gray-500 p-2 rounded-full hover:bg-rose-500 hover:text-white transition-colors shadow-sm">
           <Eye class="w-4 h-4" />
         </NuxtLink>
       </div>
     </div>
 
     <!-- Info Area -->
-    <div :class="[view === 'grid' ? 'text-center space-y-1' : 'grow space-y-4 text-left']">
-      <p v-if="product.category" class="text-[10px] text-gray-400 uppercase tracking-[0.2em]">{{ product.category.name }}</p>
-      <h3 class="text-sm font-medium uppercase tracking-widest">
-        <NuxtLink :to="`/products/${product.slug}`" class="hover:text-accent transition-colors">
-          {{ product.name }}
-        </NuxtLink>
-      </h3>
-      <p v-if="view === 'list'" class="text-sm text-gray-500 line-clamp-2 max-w-xl">{{ product.description }}</p>
-      <p class="text-sm font-bold text-gray-700">${{ price.toFixed(2) }}</p>
-      <p class="text-[10px] uppercase tracking-widest" :class="hasStock ? 'text-green-600' : 'text-red-500'">
-        {{ hasStock ? totalStock + ' in stock' : 'Out of stock' }}
-      </p>
+    <div :class="[view === 'grid' ? 'p-5 pt-2 flex flex-col' : 'grow flex flex-col justify-center py-2']">
+      <div class="flex justify-between items-start gap-4">
+        <div>
+          <h3 class="text-sm font-semibold text-gray-800 line-clamp-1 mb-1">
+            <NuxtLink :to="`/products/${product.slug}`" class="hover:text-rose-500 transition-colors">
+              {{ product.name }}
+            </NuxtLink>
+          </h3>
+
+        </div>
+        <!-- Grid Add to Cart Button -->
+        <button 
+          v-if="view === 'grid'"
+          @click="addToCart" 
+          class="border border-gray-200 text-gray-500 p-1.5 rounded hover:border-rose-500 hover:bg-rose-500 hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0" 
+          :disabled="!hasStock"
+        >
+          <ShoppingBag class="w-4 h-4" />
+        </button>
+      </div>
+
+      <div class="flex items-center gap-2 mt-auto">
+        <p class="text-base font-bold text-rose-500">${{ price.toFixed(2) }}</p>
+        <p v-if="product.is_sale" class="text-sm text-gray-400 line-through">${{ (price * 1.2).toFixed(2) }}</p>
+      </div>
+
+      <p v-if="view === 'list'" class="text-sm text-gray-500 line-clamp-2 mt-3 mb-4 max-w-2xl">{{ product.description }}</p>
       
       <!-- Actions (List Only) -->
-      <div v-if="view === 'list'" class="flex items-center space-x-4 pt-4">
-        <button @click="addToCart" class="btn btn-primary px-8 py-3 text-xs font-bold uppercase tracking-widest disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!hasStock">{{ hasStock ? 'Add to Cart' : 'Out of Stock' }}</button>
+      <div v-if="view === 'list'" class="flex items-center gap-4 mt-auto pt-2">
+        <button 
+          @click="addToCart" 
+          class="bg-rose-500 text-white hover:bg-rose-600 px-6 py-2 text-sm rounded-lg shadow-sm disabled:opacity-40 disabled:cursor-not-allowed flex items-center transition-colors" 
+          :disabled="!hasStock"
+        >
+          <ShoppingBag class="w-4 h-4 mr-2" />
+          {{ hasStock ? 'Add to Cart' : 'Out of Stock' }}
+        </button>
         <button 
           @click="toggleWishlist" 
-          class="w-12 h-12 border border-gray-100 flex items-center justify-center hover:bg-gray-50 transition-colors"
-          :class="[wishlistStore.isInWishlist(product.id) ? 'text-accent' : 'text-gray-400']"
+          class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors text-gray-500"
+          :class="[wishlistStore.isInWishlist(product.id) ? 'text-rose-500' : '']"
         >
-          <Heart class="w-5 h-5" :class="{'fill-current': wishlistStore.isInWishlist(product.id)}" />
+          <Heart class="w-5 h-5" :class="{'fill-current text-rose-500': wishlistStore.isInWishlist(product.id)}" />
         </button>
       </div>
     </div>

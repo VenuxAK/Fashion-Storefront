@@ -13,7 +13,8 @@ export default defineNuxtConfig({
     '@nuxtjs/google-fonts',
     '@nuxtjs/i18n',
     '@pinia/nuxt',
-    'nuxt-auth-sanctum'
+    'nuxt-auth-sanctum',
+    'nuxt-swiper'
   ],
 
   vite: {
