@@ -19,12 +19,7 @@ const orderNotes = ref('')
 const idempotencyKey = ref(crypto.randomUUID())
 
 // Payment method selection
-const paymentMethod = ref<'cod' | 'mmpay' | 'stripe'>('cod')
-
-// MMPay state
-const mmpayQrCode = ref<string | null>(null)
-const mmpayTransactionId = ref<string | null>(null)
-const isCreatingQR = ref(false)
+const paymentMethod = ref<'cod' | 'stripe'>('cod')
 
 // Stripe state
 const stripeLoading = ref(false)
@@ -77,20 +72,6 @@ const handleAddAddress = async () => {
   }
 }
 
-// MMPay — create QR code
-const initMMPay = async () => {
-  isCreatingQR.value = true
-  try {
-    const response: any = await createPaymentIntent('mmpay')
-    mmpayQrCode.value = response.qr_code
-    mmpayTransactionId.value = response.transaction_id
-  } catch {
-    notify('Failed to initiate payment. Please try again.', 'error')
-  } finally {
-    isCreatingQR.value = false
-  }
-}
-
 // Stripe — create PaymentIntent
 const initStripe = async () => {
   stripeLoading.value = true
@@ -106,11 +87,8 @@ const initStripe = async () => {
 }
 
 // Handle payment method change
-const onPaymentMethodChange = async (method: 'cod' | 'mmpay' | 'stripe') => {
+const onPaymentMethodChange = async (method: 'cod' | 'stripe') => {
   paymentMethod.value = method
-  if (method === 'mmpay' && !mmpayQrCode.value) {
-    await initMMPay()
-  }
   if (method === 'stripe' && !stripeClientSecret.value) {
     await initStripe()
   }
@@ -119,10 +97,6 @@ const onPaymentMethodChange = async (method: 'cod' | 'mmpay' | 'stripe') => {
 const handlePlaceOrder = async () => {
   if (!selectedAddressId.value) {
     notify('Please select or add a shipping address.', 'error')
-    return
-  }
-  if (paymentMethod.value === 'mmpay' && !mmpayTransactionId.value) {
-    notify('Please wait for the QR code to load.', 'error')
     return
   }
   if (paymentMethod.value === 'stripe' && !stripeIntentId.value) {
@@ -138,9 +112,7 @@ const handlePlaceOrder = async () => {
       payment_method: paymentMethod.value,
     }
 
-    if (paymentMethod.value === 'mmpay') {
-      orderData.payment_transaction_id = mmpayTransactionId.value
-    } else if (paymentMethod.value === 'stripe') {
+    if (paymentMethod.value === 'stripe') {
       orderData.payment_intent_id = stripeIntentId.value
     }
 
@@ -266,37 +238,6 @@ useSeoMeta({
                   <div v-if="paymentMethod === 'cod'" class="w-2 h-2 bg-accent rounded-full"></div>
                 </div>
                 <span class="text-sm font-bold uppercase">Cash on Delivery (COD)</span>
-              </div>
-            </div>
-
-            <!-- MyanMyanPay / Wallet -->
-            <div
-              @click="onPaymentMethodChange('mmpay')"
-              class="border-2 p-6 cursor-pointer transition-all"
-              :class="[paymentMethod === 'mmpay' ? 'border-accent bg-accent/5' : 'border-gray-50 hover:border-gray-200']"
-            >
-              <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-4">
-                  <div class="w-4 h-4 rounded-full border-2 flex items-center justify-center" :class="[paymentMethod === 'mmpay' ? 'border-accent' : 'border-gray-300']">
-                    <div v-if="paymentMethod === 'mmpay'" class="w-2 h-2 bg-accent rounded-full"></div>
-                  </div>
-                  <span class="text-sm font-bold uppercase">Pay with Wallet (KBZPay, WavePay, etc.)</span>
-                </div>
-                <div v-if="isCreatingQR" class="text-[10px] text-gray-400 animate-pulse">Generating QR...</div>
-              </div>
-
-              <!-- MMPay QR Code -->
-              <div v-if="paymentMethod === 'mmpay' && mmpayQrCode" class="mt-6 flex flex-col items-center space-y-4 p-6 bg-white border">
-                <img :src="mmpayQrCode" alt="Scan to pay" class="w-48 h-48" />
-                <p class="text-[10px] text-gray-400 uppercase tracking-widest text-center">
-                  Scan with KBZPay, WavePay, or any Myanmar wallet app
-                </p>
-                <button
-                  @click.stop="initMMPay"
-                  class="text-[10px] font-bold uppercase tracking-widest text-accent underline"
-                >
-                  Generate new QR code
-                </button>
               </div>
             </div>
 
