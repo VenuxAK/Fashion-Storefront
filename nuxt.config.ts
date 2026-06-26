@@ -71,8 +71,9 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiUrl: process.env.NUXT_PUBLIC_API_URL || '/api',
-      storeSlug: process.env.NUXT_PUBLIC_STORE_SLUG || 'clothing'
-    }
+      storeSlug: process.env.NUXT_PUBLIC_STORE_SLUG || 'clothing',
+      stripeKey: process.env.NUXT_PUBLIC_STRIPE_KEY || '',
+    },
   },
 
   app: {

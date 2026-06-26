@@ -25,6 +25,8 @@ const paymentMethod = ref<'cod' | 'stripe'>('cod')
 const stripeLoading = ref(false)
 const stripeClientSecret = ref<string | null>(null)
 const stripeIntentId = ref<string | null>(null)
+const stripeConfirmed = ref(false)  // Whether Stripe payment was confirmed
+const stripeCardRef = ref<any>(null) // Ref to StripeCardForm component
 
 const newAddress = reactive({
   type: 'shipping',
@@ -75,6 +77,7 @@ const handleAddAddress = async () => {
 // Stripe — create PaymentIntent
 const initStripe = async () => {
   stripeLoading.value = true
+  stripeConfirmed.value = false
   try {
     const response: any = await createPaymentIntent('stripe')
     stripeClientSecret.value = response.client_secret
@@ -84,6 +87,18 @@ const initStripe = async () => {
   } finally {
     stripeLoading.value = false
   }
+}
+
+// Handle Stripe payment success
+const onStripeSuccess = (intentId: string) => {
+  stripeConfirmed.value = true
+  stripeIntentId.value = intentId
+  // Automatically place the order after payment succeeds
+  handlePlaceOrder()
+}
+
+const onStripeError = (message: string) => {
+  notify(message, 'error')
 }
 
 // Handle payment method change
@@ -105,6 +120,18 @@ const handlePlaceOrder = async () => {
   }
 
   isPlacingOrder.value = true
+
+  // For Stripe, confirm payment first before placing the order.
+  if (paymentMethod.value === 'stripe' && !stripeConfirmed.value && stripeCardRef.value) {
+    await stripeCardRef.value.confirmPayment()
+  }
+
+  // If Stripe payment was confirmed, proceed to place the order.
+  if (paymentMethod.value === 'stripe' && !stripeConfirmed.value) {
+    isPlacingOrder.value = false
+    return
+  }
+
   try {
     const orderData: any = {
       address_id: selectedAddressId.value,
@@ -256,8 +283,19 @@ useSeoMeta({
                 </div>
                 <div v-if="stripeLoading" class="text-[10px] text-gray-400 animate-pulse">Loading...</div>
               </div>
-              <div v-if="paymentMethod === 'stripe' && stripeClientSecret" class="mt-4 text-xs text-gray-500">
-                <p>Card payment intent created. Complete the payment on the next screen after placing the order.</p>
+
+              <!-- Stripe Card Form -->
+              <div v-if="paymentMethod === 'stripe' && stripeClientSecret" class="mt-6 p-4 bg-white border">
+                <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-4">Card Details</p>
+                <StripeCardForm
+                  ref="stripeCardRef"
+                  :client-secret="stripeClientSecret"
+                  @payment-success="onStripeSuccess"
+                  @payment-error="onStripeError"
+                />
+                <div v-if="stripeConfirmed" class="mt-2 text-[10px] text-green-600 font-bold uppercase tracking-widest flex items-center gap-1">
+                  <CheckCircle class="w-3 h-3" /> Payment confirmed
+                </div>
               </div>
             </div>
           </div>
