@@ -1,6 +1,6 @@
 export const useCheckout = () => {
   const api = useApi()
-  
+
   const getAddresses = async () => {
     return await api('/addresses')
   }
@@ -8,7 +8,7 @@ export const useCheckout = () => {
   const createAddress = async (data: any) => {
     return await api('/addresses', {
       method: 'POST',
-      body: data
+      body: data,
     })
   }
 
@@ -16,11 +16,27 @@ export const useCheckout = () => {
     return await api('/checkout/validate')
   }
 
-  const placeOrder = async (data: { address_id: number, notes?: string }, idempotencyKey?: string) => {
+  const createPaymentIntent = async (paymentMethod: string) => {
+    return await api('/checkout/payment-intent', {
+      method: 'POST',
+      body: { payment_method: paymentMethod },
+    })
+  }
+
+  const placeOrder = async (
+    data: {
+      address_id: number
+      notes?: string
+      payment_method?: string
+      payment_intent_id?: string
+      payment_transaction_id?: string
+    },
+    idempotencyKey?: string,
+  ) => {
     return await api('/checkout', {
       method: 'POST',
       body: data,
-      headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined
+      headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined,
     })
   }
 
@@ -28,6 +44,7 @@ export const useCheckout = () => {
     getAddresses,
     createAddress,
     validateCheckout,
-    placeOrder
+    createPaymentIntent,
+    placeOrder,
   }
 }

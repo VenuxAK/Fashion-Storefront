@@ -3,6 +3,14 @@ import { CheckCircle, Package, ArrowRight, Home } from 'lucide-vue-next'
 
 const route = useRoute()
 const orderNumber = computed(() => route.query.number || 'N/A')
+const paymentMethod = computed(() => {
+  const method = route.query.method || 'cod'
+  switch (method) {
+    case 'mmpay': return 'MyanMyanPay (Wallet)'
+    case 'stripe': return 'Card Payment'
+    default: return 'Cash on Delivery'
+  }
+})
 </script>
 
 <template>
@@ -31,7 +39,7 @@ const orderNumber = computed(() => route.query.number || 'N/A')
         </div>
         <div class="flex justify-between items-center border-b border-gray-200 pb-4">
           <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Payment Method</span>
-          <span class="text-sm font-bold uppercase">Cash on Delivery</span>
+          <span class="text-sm font-bold uppercase">{{ paymentMethod }}</span>
         </div>
         <div class="flex justify-between items-center pb-4">
           <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Status</span>
