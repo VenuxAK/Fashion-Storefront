@@ -1,77 +1,51 @@
 <script setup lang="ts">
-import { CheckCircle, Package, ArrowRight, Home } from 'lucide-vue-next'
-
 const route = useRoute()
 const orderNumber = computed(() => route.query.number || 'N/A')
 const paymentMethod = computed(() => {
   const method = route.query.method || 'cod'
-  switch (method) {
-    case 'mmpay': return 'MyanMyanPay (Wallet)'
-    case 'stripe': return 'Card Payment'
-    default: return 'Cash on Delivery'
-  }
+  return method === 'stripe' ? 'Card Payment (Stripe)' : 'Cash on Delivery'
 })
 </script>
 
 <template>
-  <div class="container py-40">
-    <div class="max-w-2xl mx-auto text-center space-y-12">
-      <!-- Success Icon -->
+  <div class="container py-32">
+    <div class="max-w-xl mx-auto text-center space-y-12">
       <div class="flex justify-center">
-        <div class="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center text-green-500 animate-bounce-slow">
-          <CheckCircle class="w-12 h-12" />
+        <div class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center">
+          <svg class="w-10 h-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
         </div>
       </div>
 
-      <!-- Success Message -->
-      <div class="space-y-4">
-        <h1 class="text-4xl font-bold uppercase tracking-tighter">Order Placed Successfully!</h1>
-        <p class="text-gray-500 text-sm leading-relaxed">
-          Thank you for your purchase. Your order has been received and is now being processed. We'll send you an update as soon as your items are on their way.
+      <div class="space-y-3">
+        <h1 class="text-3xl font-bold uppercase tracking-tighter">Order Confirmed</h1>
+        <p class="text-gray-500 text-sm leading-relaxed max-w-md mx-auto">
+          Thank you for your purchase. We'll send you a confirmation once your items ship.
         </p>
       </div>
 
-      <!-- Order Details Card -->
-      <div class="bg-gray-50 p-10 border border-gray-100 space-y-6">
+      <div class="bg-gray-50 p-8 border border-gray-100 space-y-4 text-left">
         <div class="flex justify-between items-center border-b border-gray-200 pb-4">
           <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Order Number</span>
-          <span class="text-sm font-bold uppercase">{{ orderNumber }}</span>
+          <span class="text-sm font-bold">{{ orderNumber }}</span>
         </div>
         <div class="flex justify-between items-center border-b border-gray-200 pb-4">
-          <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Payment Method</span>
-          <span class="text-sm font-bold uppercase">{{ paymentMethod }}</span>
+          <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Payment</span>
+          <span class="text-sm font-bold">{{ paymentMethod }}</span>
         </div>
-        <div class="flex justify-between items-center pb-4">
+        <div class="flex justify-between items-center">
           <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Status</span>
-          <span class="text-[10px] bg-blue-100 text-blue-600 px-3 py-1 font-bold uppercase rounded-full">Processing</span>
+          <span class="text-[10px] bg-blue-100 text-blue-700 px-3 py-1 font-bold uppercase tracking-wider rounded-full">Processing</span>
         </div>
       </div>
 
-      <!-- Actions -->
-      <div class="flex flex-col sm:flex-row justify-center gap-4 pt-8">
-        <NuxtLink to="/shop" class="btn btn-primary px-10 py-5 text-xs font-bold uppercase tracking-widest flex items-center justify-center">
-          <span>Continue Shopping</span>
-          <ArrowRight class="ml-2 w-4 h-4" />
-        </NuxtLink>
-        <NuxtLink to="/" class="btn btn-outline px-10 py-5 text-xs font-bold uppercase tracking-widest flex items-center justify-center">
-          <Home class="mr-2 w-4 h-4" />
-          <span>Go to Home</span>
-        </NuxtLink>
+      <div class="flex flex-col sm:flex-row justify-center gap-3 pt-4">
+        <NuxtLink to="/shop" class="bg-black text-white px-8 py-4 text-xs font-bold uppercase tracking-[0.2em] hover:bg-gray-800 transition-colors">Continue Shopping</NuxtLink>
+        <NuxtLink to="/" class="border-2 border-gray-200 px-8 py-4 text-xs font-bold uppercase tracking-[0.2em] hover:border-gray-400 transition-colors">Home</NuxtLink>
       </div>
 
-      <p class="text-[10px] text-gray-400 uppercase tracking-widest">
-        Need help? <NuxtLink to="/contact" class="text-accent underline">Contact our support team</NuxtLink>
+      <p class="text-[10px] text-gray-400 tracking-wider">
+        Need help? <NuxtLink to="/contact" class="underline underline-offset-2">Contact support</NuxtLink>
       </p>
     </div>
   </div>
 </template>
-
-<style scoped>
-@keyframes bounce-slow {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-.animate-bounce-slow {
-  animation: bounce-slow 2s infinite ease-in-out;
-}
-</style>
