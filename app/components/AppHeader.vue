@@ -106,7 +106,7 @@ const toggleLocale = () => {
       leave-from-class="opacity-100 translate-x-0"
       leave-to-class="opacity-0 -translate-x-full"
     >
-      <div v-if="isMenuOpen" class="fixed inset-0 bg-white z-[60] lg:hidden">
+      <div v-if="isMenuOpen" class="fixed inset-0 bg-white z-60 lg:hidden">
         <div class="p-6">
           <div class="flex justify-between items-center mb-10">
             <span class="text-xl font-bold uppercase">Menu</span>

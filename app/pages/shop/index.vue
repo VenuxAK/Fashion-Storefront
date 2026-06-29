@@ -44,18 +44,18 @@ const { data: categoriesData } = await useAsyncData('shop-categories', () => get
 const { data: brandsData } = await useAsyncData('shop-brands', () => getBrands())
 
 const products = computed(() => {
-  const raw = productsData.value?.data || productsData.value || []
+  const raw = (productsData.value as any)?.data || productsData.value || []
   return Array.isArray(raw) ? raw : []
 })
 const categories = computed(() => {
-  const raw = categoriesData.value?.data || categoriesData.value || []
+  const raw = (categoriesData.value as any)?.data || categoriesData.value || []
   return Array.isArray(raw) ? raw : []
 })
 const brands = computed(() => {
-  const raw = brandsData.value?.data || brandsData.value || []
+  const raw = (brandsData.value as any)?.data || brandsData.value || []
   return Array.isArray(raw) ? raw : []
 })
-const pagination = computed(() => productsData.value?.meta || {})
+const pagination = computed(() => (productsData.value as any)?.meta || {})
 
 const setCategory = (slug: string) => {
   selectedCategory.value = slug
@@ -176,7 +176,7 @@ useSeoMeta({
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-grow space-y-6">
+        <main class="grow space-y-6">
           <!-- Toolbar -->
           <div class="bg-white rounded-xl shadow-[0_1px_3px_rgba(3,0,71,0.09)] flex flex-col sm:flex-row justify-between items-center px-5 py-4 gap-4">
             <div class="flex items-center w-full sm:w-auto text-sm text-gray-500">

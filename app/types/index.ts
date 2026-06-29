@@ -29,7 +29,7 @@ export interface Product {
 }
 
 export interface CartItem {
-  id?: number // ID is only present if fetched from API
+  id: number // Assigned dynamically (variant_id for guests, DB id for auth)
   variant_id: number
   name: string
   price: number

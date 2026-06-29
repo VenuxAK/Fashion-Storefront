@@ -25,7 +25,7 @@ const scrollToTop = () => {
     <button 
       v-if="isVisible"
       @click="scrollToTop"
-      class="fixed bottom-10 right-10 z-[100] w-12 h-12 bg-white border border-gray-100 shadow-xl rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all"
+      class="fixed bottom-10 right-10 z-100 w-12 h-12 bg-white border border-gray-100 shadow-xl rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all"
     >
       <ChevronUp class="w-6 h-6" />
     </button>

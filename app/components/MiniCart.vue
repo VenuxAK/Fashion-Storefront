@@ -27,7 +27,7 @@ onMounted(() => {
     >
       <div 
         v-if="uiStore.isMiniCartOpen" 
-        class="fixed inset-0 bg-black/50 z-[100]"
+        class="fixed inset-0 bg-black/50 z-100"
         @click="uiStore.closeMiniCart"
       ></div>
     </Transition>
@@ -43,7 +43,7 @@ onMounted(() => {
     >
       <div 
         v-if="uiStore.isMiniCartOpen" 
-        class="fixed top-0 right-0 h-full w-full max-w-md bg-white z-[110] shadow-2xl flex flex-col"
+        class="fixed top-0 right-0 h-full w-full max-w-md bg-white z-110 shadow-2xl flex flex-col"
       >
         <!-- Header -->
         <div class="p-6 border-b border-gray-100 flex items-center justify-between">
@@ -54,7 +54,7 @@ onMounted(() => {
         </div>
 
         <!-- Content -->
-        <div class="flex-grow overflow-y-auto p-6 space-y-6">
+        <div class="grow overflow-y-auto p-6 space-y-6">
           <div v-if="cartStore.items.length === 0" class="h-full flex flex-col items-center justify-center text-center space-y-4">
             <ShoppingBag class="w-16 h-16 text-gray-200" />
             <p class="text-gray-500 uppercase tracking-widest text-sm">{{ $t('common.empty_cart') }}</p>
@@ -68,10 +68,10 @@ onMounted(() => {
           </div>
 
           <div v-else v-for="item in cartStore.items" :key="item.id" class="flex space-x-4 border-b border-gray-50 pb-6">
-            <div class="w-24 h-24 flex-shrink-0 bg-gray-50">
-              <img :src="getImageUrl(item.image)" :alt="item.name" class="w-full h-full object-cover">
+            <div class="w-24 h-24 shrink-0 bg-gray-50">
+              <img :src="getImageUrl(item.image || '')" :alt="item.name" class="w-full h-full object-cover">
             </div>
-            <div class="flex-grow space-y-1">
+            <div class="grow space-y-1">
               <div class="flex justify-between items-start">
                 <h3 class="text-sm font-bold uppercase">{{ item.name }}</h3>
                 <button @click="cartStore.removeItem(item.id)" class="text-gray-400 hover:text-red-500 transition-colors">

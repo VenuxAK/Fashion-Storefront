@@ -11,12 +11,12 @@ const { data: categoriesData } = await useAsyncData('categories', () => getCateg
 const { data: brandsData } = await useAsyncData('brands', () => getBrands())
 
 const products = computed(() => {
-  const raw = productsData.value?.data || productsData.value || []
+  const raw = (productsData.value as any)?.data || productsData.value || []
   return Array.isArray(raw) ? raw : []
 })
 
 const categories = computed(() => {
-  const raw = categoriesData.value?.data || categoriesData.value || []
+  const raw = (categoriesData.value as any)?.data || categoriesData.value || []
   return Array.isArray(raw) ? raw : []
 })
 
@@ -36,7 +36,7 @@ const childCategories = computed(() => {
 })
 
 const brands = computed(() => {
-  const raw = brandsData.value?.data || brandsData.value || []
+  const raw = (brandsData.value as any)?.data || brandsData.value || []
   return Array.isArray(raw) ? raw : []
 })
 
@@ -126,7 +126,7 @@ useSeoMeta({
             '1024': { slidesPerView: 4, spaceBetween: 24 },
           }"
           :autoplay="{ delay: 3000, disableOnInteraction: false }"
-          class="!pb-4"
+          class="pb-4!"
         >
           <SwiperSlide v-for="product in products" :key="'flash-'+product.id" class="h-auto">
             <ProductCard :product="product" class="h-full" />
@@ -170,7 +170,7 @@ useSeoMeta({
             '1024': { slidesPerView: 4, spaceBetween: 24 },
           }"
           :autoplay="{ delay: 3500, disableOnInteraction: false }"
-          class="!pb-4"
+          class="pb-4!"
         >
           <SwiperSlide v-for="product in [...products].reverse()" :key="'feat-'+product.id" class="h-auto">
             <ProductCard :product="product" class="h-full" />
@@ -247,7 +247,7 @@ useSeoMeta({
             '1024': { slidesPerView: 4, spaceBetween: 24 },
           }"
           :autoplay="{ delay: 4000, disableOnInteraction: false }"
-          class="!pb-4"
+          class="pb-4!"
         >
           <SwiperSlide v-for="product in products" :key="'new-'+product.id" class="h-auto">
             <ProductCard :product="product" class="h-full" />
@@ -270,7 +270,7 @@ useSeoMeta({
             <input 
               type="email" 
               placeholder="Enter your email" 
-              class="flex-grow bg-white border border-gray-200 px-6 py-4 text-sm focus:ring-1 focus:ring-accent outline-none shadow-sm"
+              class="grow bg-white border border-gray-200 px-6 py-4 text-sm focus:ring-1 focus:ring-accent outline-none shadow-sm"
             >
             <button type="submit" class="bg-primary text-white px-8 py-4 text-xs uppercase font-bold tracking-widest hover:bg-black transition-colors">
               Subscribe

@@ -52,9 +52,9 @@ const currentYear = new Date().getFullYear()
             <input 
               type="email" 
               placeholder="Your email address" 
-              class="flex-grow bg-gray-50 border-none px-4 py-3 text-sm focus:ring-1 focus:ring-accent outline-none min-w-0"
+              class="grow bg-gray-50 border-none px-4 py-3 text-sm focus:ring-1 focus:ring-accent outline-none min-w-0"
             >
-            <button type="submit" class="bg-primary text-white px-6 py-3 text-xs uppercase font-bold tracking-widest hover:bg-black transition-colors flex-shrink-0">
+            <button type="submit" class="bg-primary text-white px-6 py-3 text-xs uppercase font-bold tracking-widest hover:bg-black transition-colors shrink-0">
               Join
             </button>
           </form>

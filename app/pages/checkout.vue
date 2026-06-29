@@ -267,7 +267,7 @@ useSeoMeta({ title: 'Secure Checkout | SimpCommerce', description: 'Complete you
             <div class="space-y-4 max-h-[360px] overflow-y-auto pr-2">
               <div v-for="item in cartStore.items" :key="item.id" class="flex gap-4">
                 <div class="w-14 h-18 bg-white border shrink-0">
-                  <img :src="getImageUrl(item.image)" class="w-full h-full object-cover">
+                  <img :src="getImageUrl(item.image || '')" class="w-full h-full object-cover">
                 </div>
                 <div class="flex-1 min-w-0">
                   <p class="text-xs font-semibold truncate">{{ item.name }}</p>

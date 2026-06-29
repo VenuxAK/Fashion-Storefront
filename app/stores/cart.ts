@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
+import type { CartItem } from '~/types'
 
 export const useCartStore = defineStore('cart', () => {
-  const items = ref([])
+  const items = ref<CartItem[]>([])
   const api = useApi()
   const auth = useAuth()
 
@@ -72,6 +73,7 @@ export const useCartStore = defineStore('cart', () => {
         existing.quantity = currentQty + quantity
       } else {
         items.value.push({
+          id: variant.id,
           variant_id: variant.id,
           name: product?.name || 'Unknown Product',
           price: price,
@@ -158,18 +160,27 @@ export const useCartStore = defineStore('cart', () => {
     localStorage.removeItem('cart')
   }
 
+  /**
+   * Synchronize the guest/local storage cart with the server database cart.
+   * Consolidates all items by sending a single batch POST request to /cart/sync
+   * rather than firing multiple HTTP requests sequentially (preventing N+1 network requests).
+   */
   const syncCart = async () => {
     const saved = localStorage.getItem('cart')
     if (!saved) return
     try {
       const localItems = JSON.parse(saved)
-      for (const item of localItems) {
-        await api('/cart', {
-          method: 'POST',
-          body: { product_variant_id: item.variant_id, quantity: item.quantity },
-        }).catch(() => {})
-      }
-    } catch {}
+      const payload = localItems.map((item: any) => ({
+        product_variant_id: item.variant_id,
+        quantity: item.quantity
+      }))
+      await api('/cart/sync', {
+        method: 'POST',
+        body: { items: payload }
+      })
+    } catch (error) {
+      console.error('Failed to sync guest cart with server', error)
+    }
     localStorage.removeItem('cart')
     await fetchCart()
   }

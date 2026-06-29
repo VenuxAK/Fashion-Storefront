@@ -22,7 +22,7 @@ const getColors = (type: string) => {
 
 <template>
   <Teleport to="body">
-    <div class="fixed top-24 right-6 z-[200] space-y-4 w-full max-w-sm pointer-events-none">
+    <div class="fixed top-24 right-6 z-200 space-y-4 w-full max-w-sm pointer-events-none">
       <TransitionGroup
         enter-active-class="transition duration-300 ease-out"
         enter-from-class="opacity-0 translate-x-10"
@@ -37,10 +37,10 @@ const getColors = (type: string) => {
           class="pointer-events-auto border shadow-xl p-5 flex items-start space-x-4 animate-in slide-in-from-right-full"
           :class="getColors(note.type)"
         >
-          <div class="flex-shrink-0 pt-0.5">
+          <div class="shrink-0 pt-0.5">
             <component :is="getIcon(note.type)" class="w-5 h-5" />
           </div>
-          <div class="flex-grow space-y-1">
+          <div class="grow space-y-1">
             <p class="text-xs font-bold uppercase tracking-widest">{{ note.type }}</p>
             <p class="text-sm text-gray-900 font-medium leading-relaxed">{{ note.message }}</p>
           </div>

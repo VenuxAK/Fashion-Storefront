@@ -6,7 +6,7 @@ const { getCategories } = useProduct()
 const { data: categoriesData, pending } = await useAsyncData('all-categories', () => getCategories())
 
 const categories = computed(() => {
-  const raw = categoriesData.value?.data || categoriesData.value || []
+  const raw = (categoriesData.value as any)?.data || categoriesData.value || []
   return Array.isArray(raw) ? raw : []
 })
 

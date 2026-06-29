@@ -2,12 +2,13 @@
 import { X, Search, ArrowRight } from 'lucide-vue-next'
 import { useUiStore } from '~/stores/ui'
 import { useProduct } from '~/composables/useProduct'
+import type { Product } from '~/types'
 
 const uiStore = useUiStore()
 const { getProducts } = useProduct()
 
 const query = ref('')
-const results = ref([])
+const results = ref<Product[]>([])
 const isLoading = ref(false)
 
 const handleSearch = async () => {
@@ -90,7 +91,7 @@ const getImageUrl = (image: string) => url(image)
               >
                 <div class="flex items-center space-x-6">
                   <div class="w-16 h-20 bg-gray-50 shrink-0">
-                    <img :src="getImageUrl(product.image)" class="w-full h-full object-cover">
+                    <img :src="getImageUrl(product.image || '')" class="w-full h-full object-cover">
                   </div>
                   <div class="space-y-1">
                     <p class="text-sm font-bold uppercase tracking-tight">{{ product.name }}</p>

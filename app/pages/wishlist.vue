@@ -45,7 +45,7 @@ useSeoMeta({
             class="flex flex-col md:flex-row items-center justify-between p-8 border border-gray-100 hover:shadow-md transition-shadow gap-8"
           >
             <div class="flex items-center space-x-8 w-full md:w-auto">
-              <div class="w-20 h-24 bg-gray-50 flex-shrink-0">
+              <div class="w-20 h-24 bg-gray-50 shrink-0">
                 <img :src="getImageUrl(item.image)" class="w-full h-full object-cover">
               </div>
               <div class="space-y-1">
@@ -62,7 +62,7 @@ useSeoMeta({
             <div class="flex items-center space-x-4 w-full md:w-auto justify-between md:justify-end">
               <button 
                 @click="addToCart(item)"
-                class="btn btn-primary px-8 py-4 text-xs font-bold uppercase tracking-widest flex-grow md:flex-grow-0"
+                class="btn btn-primary px-8 py-4 text-xs font-bold uppercase tracking-widest grow md:grow-0"
               >
                 Add to Cart
               </button>

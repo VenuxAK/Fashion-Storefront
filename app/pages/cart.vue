@@ -43,8 +43,8 @@ useSeoMeta({
               <tr v-for="item in cartStore.items" :key="item.id" class="flex flex-col md:table-row py-8 md:py-0">
                 <td class="py-8">
                   <div class="flex items-center space-x-6">
-                    <div class="w-24 h-24 bg-gray-50 flex-shrink-0">
-                      <img :src="getImageUrl(item.image)" :alt="item.name" class="w-full h-full object-cover">
+                    <div class="w-24 h-24 bg-gray-50 shrink-0">
+                      <img :src="getImageUrl(item.image || '')" :alt="item.name" class="w-full h-full object-cover">
                     </div>
                     <div class="space-y-1">
                       <h3 class="text-sm font-bold uppercase">{{ item.name }}</h3>

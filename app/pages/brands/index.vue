@@ -4,7 +4,7 @@ const { getBrands } = useProduct()
 const { data: brandsData, pending } = await useAsyncData('all-brands', () => getBrands())
 
 const brands = computed(() => {
-  const raw = brandsData.value?.data || brandsData.value || []
+  const raw = (brandsData.value as any)?.data || brandsData.value || []
   return Array.isArray(raw) ? raw : []
 })
 
@@ -32,7 +32,7 @@ useSeoMeta({
           v-for="brand in brands" 
           :key="brand.id"
           :to="`/shop?brand_id=${brand.id}`"
-          class="bg-white rounded-xl shadow-[0_1px_3px_rgba(3,0,71,0.09)] hover:shadow-lg p-6 flex items-center justify-center transition-all duration-300 group border border-transparent hover:border-rose-100 aspect-[4/3]"
+          class="bg-white rounded-xl shadow-[0_1px_3px_rgba(3,0,71,0.09)] hover:shadow-lg p-6 flex items-center justify-center transition-all duration-300 group border border-transparent hover:border-rose-100 aspect-4/3"
         >
           <img 
             :src="brand.logo_url || 'https://placehold.co/400x200?text='+brand.name" 

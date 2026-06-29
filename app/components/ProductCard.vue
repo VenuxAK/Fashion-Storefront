@@ -61,6 +61,7 @@ const addToCart = async () => {
   if (!hasStock.value) return
   // If the product has size/color variants, redirect to product page for selection
   if (needsVariantSelection.value) {
+    notify('This product has size/color options. Please choose the size and color on the product details page.', 'info')
     navigateTo(`/products/${props.product.slug}`)
     return
   }
