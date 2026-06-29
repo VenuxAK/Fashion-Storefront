@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChevronRight, ArrowLeft } from 'lucide-vue-next'
+import { ChevronRight, ArrowLeft, Check } from 'lucide-vue-next'
 
 definePageMeta({
   middleware: 'sanctum:auth'
@@ -39,6 +39,23 @@ const getStatusColor = (status: string) => {
     default: return 'bg-gray-100 text-gray-600'
   }
 }
+
+const steps = [
+  { key: 'pending', label: 'Order Placed', desc: 'We have received your order.' },
+  { key: 'processing', label: 'Processing', desc: 'Your items are being packed.' },
+  { key: 'shipped', label: 'Shipped', desc: 'Your order is on the way.' },
+  { key: 'delivered', label: 'Delivered', desc: 'Order has been delivered.' }
+]
+
+const currentStepIndex = computed(() => {
+  if (!order.value) return -1
+  const status = order.value.status
+  if (status === 'cancelled' || status === 'refunded') return -1
+  
+  // Find match
+  const idx = steps.findIndex(s => s.key === status)
+  return idx !== -1 ? idx : 0 // fallback to Placed for initial/other states
+})
 </script>
 
 <template>
@@ -46,7 +63,7 @@ const getStatusColor = (status: string) => {
     <div class="flex flex-col lg:flex-row gap-16">
       <UserNav />
 
-      <main class="flex-grow space-y-12">
+      <main class="grow space-y-12">
         <div v-if="pending" class="py-20 text-center uppercase tracking-widest text-xs font-bold text-gray-400">
           Loading Order Details...
         </div>
@@ -78,13 +95,113 @@ const getStatusColor = (status: string) => {
             </div>
           </div>
 
+          <!-- Order Tracking Timeline -->
+          <div v-if="order.status !== 'cancelled' && order.status !== 'refunded'" class="border border-gray-100 p-6 md:p-8">
+            <h3 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-8">Order Status Tracking</h3>
+            
+            <!-- Desktop Horizontal Timeline -->
+            <div class="hidden md:flex items-start justify-between relative">
+              <!-- Line Connector Behind Dots -->
+              <div class="absolute left-[12%] right-[12%] top-4 h-[2px] bg-gray-100 -z-10">
+                <div 
+                  class="h-full bg-accent transition-all duration-500 ease-out"
+                  :style="{ width: currentStepIndex > 0 ? (currentStepIndex / (steps.length - 1)) * 100 + '%' : '0%' }"
+                />
+              </div>
+
+              <!-- Steps -->
+              <div 
+                v-for="(step, idx) in steps" 
+                :key="step.key" 
+                class="flex flex-col items-center text-center w-1/4"
+              >
+                <!-- Dot / Indicator -->
+                <div 
+                  class="w-8.5 h-8.5 rounded-full flex items-center justify-center border-2 transition-all duration-300 relative"
+                  :class="[
+                    idx <= currentStepIndex 
+                      ? 'bg-accent border-accent text-white shadow-sm' 
+                      : 'bg-white border-gray-200 text-gray-400'
+                  ]"
+                >
+                  <!-- Pulse animation for active step -->
+                  <span 
+                    v-if="idx === currentStepIndex" 
+                    class="absolute inset-[-3px] rounded-full border border-accent animate-ping opacity-60"
+                  />
+                  
+                  <Check v-if="idx < currentStepIndex" class="w-4 h-4" />
+                  <span v-else class="text-xs font-bold">{{ idx + 1 }}</span>
+                </div>
+
+                <!-- Label & Description -->
+                <div class="mt-4 space-y-1">
+                  <p 
+                    class="text-xs font-bold uppercase tracking-widest transition-colors"
+                    :class="idx <= currentStepIndex ? 'text-primary' : 'text-gray-400'"
+                  >
+                    {{ step.label }}
+                  </p>
+                  <p class="text-[10px] text-gray-400 max-w-[160px] mx-auto leading-relaxed">
+                    {{ step.desc }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mobile Vertical Timeline -->
+            <div class="md:hidden space-y-6 pl-4 relative before:absolute before:left-[19px] before:top-2 before:bottom-2 before:w-[2px] before:bg-gray-100">
+              <div 
+                v-for="(step, idx) in steps" 
+                :key="step.key" 
+                class="flex gap-4 relative"
+              >
+                <!-- Connector Highlight Line -->
+                <div 
+                  v-if="idx < currentStepIndex"
+                  class="absolute left-[3px] top-6 w-[2px] h-[calc(100%+8px)] bg-accent"
+                />
+
+                <!-- Dot Indicator -->
+                <div 
+                  class="w-8 h-8 rounded-full flex items-center justify-center border-2 shrink-0 transition-all duration-300 relative z-10"
+                  :class="[
+                    idx <= currentStepIndex 
+                      ? 'bg-accent border-accent text-white' 
+                      : 'bg-white border-gray-200 text-gray-400'
+                  ]"
+                >
+                  <span 
+                    v-if="idx === currentStepIndex" 
+                    class="absolute inset-[-3px] rounded-full border border-accent animate-ping opacity-60"
+                  />
+                  <Check v-if="idx < currentStepIndex" class="w-3.5 h-3.5" />
+                  <span v-else class="text-xs font-bold">{{ idx + 1 }}</span>
+                </div>
+
+                <!-- Step Info -->
+                <div class="pt-0.5 space-y-0.5">
+                  <p 
+                    class="text-xs font-bold uppercase tracking-widest"
+                    :class="idx <= currentStepIndex ? 'text-primary' : 'text-gray-400'"
+                  >
+                    {{ step.label }}
+                  </p>
+                  <p class="text-[10px] text-gray-400 leading-relaxed">
+                    {{ step.desc }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Items -->
           <div class="space-y-6">
             <h3 class="text-sm font-bold uppercase tracking-widest">Items Purchased</h3>
             <div class="border border-gray-100 divide-y divide-gray-100">
               <div v-for="item in order.items" :key="item.id" class="p-6 flex items-center justify-between gap-6">
                 <div class="flex items-center gap-6">
-                  <div class="w-20 h-24 bg-gray-50 flex-shrink-0">
+                  <div class="w-20 h-24 bg-gray-50 shrink-0">
                     <img v-if="item.variant?.image || item.variant?.product?.image" :src="url(item.variant?.image || item.variant?.product?.image)" class="w-full h-full object-cover">
                   </div>
                   <div>

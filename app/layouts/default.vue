@@ -12,7 +12,7 @@ const isTransparentHeaderPage = computed(() => {
     <AppHeader />
     
     <main 
-      class="flex-grow transition-all duration-300" 
+      class="grow transition-all duration-300" 
       :class="[isTransparentHeaderPage ? 'pt-0' : 'pt-[80px] lg:pt-[100px]']"
     >
       <slot />

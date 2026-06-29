@@ -8,6 +8,7 @@ import { useNotify } from '~/composables/useNotify'
 interface Product {
   id: number
   name: string
+  description: string
   slug: string
   base_price: string | number
   image: string
@@ -96,7 +97,7 @@ const toggleWishlist = () => {
     <!-- Image Area -->
     <div 
       class="relative bg-white overflow-hidden flex items-center justify-center shrink-0"
-      :class="[view === 'grid' ? 'aspect-[4/3] w-full p-4' : 'w-48 aspect-[4/3] rounded-lg p-2']"
+      :class="[view === 'grid' ? 'aspect-4/3 w-full p-4' : 'w-48 aspect-4/3 rounded-lg p-2']"
     >
       <!-- Badges -->
       <div class="absolute top-3 left-3 z-10 flex flex-col gap-2">

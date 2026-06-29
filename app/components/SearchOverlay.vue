@@ -28,13 +28,11 @@ const handleSearch = async () => {
 }
 
 // Debounced search
-watch(query, (newQuery) => {
+watch(query, (newQuery, _, onCleanup) => {
   const timer = setTimeout(() => {
-    if (newQuery === query.value) {
-      handleSearch()
-    }
+    handleSearch()
   }, 300)
-  return () => clearTimeout(timer)
+  onCleanup(() => clearTimeout(timer))
 })
 
 const close = () => {
@@ -57,7 +55,7 @@ const getImageUrl = (image: string) => url(image)
       leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
-      <div v-if="uiStore.isSearchOpen" class="fixed inset-0 bg-white z-[150] flex flex-col">
+      <div v-if="uiStore.isSearchOpen" class="fixed inset-0 bg-white z-150 flex flex-col">
         <!-- Close Button -->
         <button @click="close" class="absolute top-10 right-10 hover:text-accent transition-colors p-2">
           <X class="w-8 h-8" />
@@ -91,7 +89,7 @@ const getImageUrl = (image: string) => url(image)
                 class="flex items-center justify-between group p-4 hover:bg-gray-50 transition-colors"
               >
                 <div class="flex items-center space-x-6">
-                  <div class="w-16 h-20 bg-gray-50 flex-shrink-0">
+                  <div class="w-16 h-20 bg-gray-50 shrink-0">
                     <img :src="getImageUrl(product.image)" class="w-full h-full object-cover">
                   </div>
                   <div class="space-y-1">

@@ -154,7 +154,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
       leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
-      <div v-if="uiStore.quickViewProduct" class="fixed inset-0 z-[80] flex items-center justify-center p-4 md:p-8">
+      <div v-if="uiStore.quickViewProduct" class="fixed inset-0 z-80 flex items-center justify-center p-4 md:p-8">
         <!-- Backdrop -->
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="uiStore.closeQuickView()"></div>
 
@@ -297,7 +297,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                   </div>
                   <button
                     @click="addToCart"
-                    class="flex-grow bg-primary text-white h-12 text-xs font-bold uppercase tracking-[0.15em] hover:bg-black transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    class="grow bg-primary text-white h-12 text-xs font-bold uppercase tracking-[0.15em] hover:bg-black transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     :disabled="!canAddToCart"
                   >
                     <ShoppingBag class="w-4 h-4" />
