@@ -5,6 +5,7 @@ export const useAuth = () => {
 
   const login = async (credentials: any) => {
     await sanctum.login(credentials)
+    await sanctum.refreshIdentity()
     return { customer: user.value }
   }
 

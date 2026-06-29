@@ -22,5 +22,6 @@ const isTransparentHeaderPage = computed(() => {
     <MiniCart />
     <NotificationToast />
     <BackToTop />
+    <ProductQuickView />
   </div>
 </template>

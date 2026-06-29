@@ -2,6 +2,7 @@
 import { ShoppingBag, Heart, Eye } from 'lucide-vue-next'
 import { useCartStore } from '~/stores/cart'
 import { useWishlistStore } from '~/stores/wishlist'
+import { useUiStore } from '~/stores/ui'
 import { useNotify } from '~/composables/useNotify'
 
 interface Product {
@@ -25,6 +26,7 @@ const props = withDefaults(defineProps<{
 
 const cartStore = useCartStore()
 const wishlistStore = useWishlistStore()
+const uiStore = useUiStore()
 const { notify } = useNotify()
 const { url } = useImage()
 
@@ -35,6 +37,12 @@ const totalStock = computed(() => {
 })
 
 const hasStock = computed(() => totalStock.value > 0)
+
+// Check if the product has variants with size/color that require user selection
+const needsVariantSelection = computed(() => {
+  const variants = props.product.variants || []
+  return variants.some(v => v.size) || variants.some(v => v.color)
+})
 
 const defaultVariant = computed(() => {
   return (props.product.variants || []).find(v => (v.stock_quantity || 0) > 0)
@@ -50,6 +58,11 @@ const price = computed(() => {
 
 const addToCart = async () => {
   if (!hasStock.value) return
+  // If the product has size/color variants, redirect to product page for selection
+  if (needsVariantSelection.value) {
+    navigateTo(`/products/${props.product.slug}`)
+    return
+  }
   const variant = defaultVariant.value
   try {
     await cartStore.addToCart(props.product, variant, 1)
@@ -110,9 +123,9 @@ const toggleWishlist = () => {
         >
           <Heart class="w-4 h-4" :class="{'fill-current text-rose-500': wishlistStore.isInWishlist(product.id)}" />
         </button>
-        <NuxtLink :to="`/products/${product.slug}`" class="bg-white/90 backdrop-blur-sm text-gray-500 p-2 rounded-full hover:bg-rose-500 hover:text-white transition-colors shadow-sm">
+        <button @click="uiStore.openQuickView(product)" class="bg-white/90 backdrop-blur-sm text-gray-500 p-2 rounded-full hover:bg-rose-500 hover:text-white transition-colors shadow-sm">
           <Eye class="w-4 h-4" />
-        </NuxtLink>
+        </button>
       </div>
     </div>
 
@@ -153,7 +166,7 @@ const toggleWishlist = () => {
           :disabled="!hasStock"
         >
           <ShoppingBag class="w-4 h-4 mr-2" />
-          {{ hasStock ? 'Add to Cart' : 'Out of Stock' }}
+          {{ !hasStock ? 'Out of Stock' : needsVariantSelection ? 'Select Options' : 'Add to Cart' }}
         </button>
         <button 
           @click="toggleWishlist" 
