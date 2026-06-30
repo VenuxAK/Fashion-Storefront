@@ -2,9 +2,19 @@ let csrfFetched = false
 
 export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig()
-  const apiBase = import.meta.server ? 'http://localhost:8000/api' : (config.public.apiUrl as string)
+  let apiBase = import.meta.server ? (config.apiUrl as string) : (config.public.apiUrl as string)
+  if (!apiBase.includes('/v1')) {
+    apiBase = apiBase.replace(/\/api\/?$/, '/api/v1')
+  }
 
   const storeSlug = config.public.storeSlug as string
+
+  // Extract base target URL for Sanctum operations (e.g. CSRF cookies)
+  let baseTarget = ''
+  try {
+    // If apiBase is absolute, extract its origin. If relative (like /api/v1), it resolves relative to storefront domain.
+    baseTarget = apiBase.startsWith('http') ? new URL(apiBase).origin : ''
+  } catch (e) {}
 
   const api = $fetch.create({
     baseURL: apiBase,
@@ -18,7 +28,7 @@ export default defineNuxtPlugin(() => {
 
       if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
         if (!csrfFetched) {
-          await $fetch(`${apiBase.replace('/api', '')}/sanctum/csrf-cookie`, {
+          await $fetch(`${baseTarget}/sanctum/csrf-cookie`, {
             credentials: 'include',
           })
           csrfFetched = true

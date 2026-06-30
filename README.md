@@ -28,8 +28,11 @@ bun install
 ### 3. Environment Setup
 Create a `.env` file or use the default runtime configuration:
 ```env
-NUXT_PUBLIC_API_URL=http://localhost:8000/api
+NUXT_PUBLIC_API_URL=/api/v1
 NUXT_PUBLIC_STORE_SLUG=clothing
+NUXT_PUBLIC_BASE_URL=http://localhost:3000
+NUXT_PROXY_TARGET=http://localhost:8000
+NUXT_API_URL=http://localhost:8000/api/v1
 ```
 
 ### 4. Development

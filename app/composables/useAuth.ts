@@ -12,7 +12,7 @@ export const useAuth = () => {
   const register = async (data: any) => {
     const api = useApi()
     const response: any = await api('/customer/register', { method: 'POST', body: data })
-    user.value = response.customer
+    await sanctum.refreshIdentity()
     return response
   }
 
@@ -22,7 +22,7 @@ export const useAuth = () => {
   }
 
   const fetchUser = async () => {
-    await sanctum.fetchUser()
+    await sanctum.refreshIdentity()
   }
 
   return {

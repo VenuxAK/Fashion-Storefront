@@ -23,7 +23,8 @@
 
 | Config | Value |
 |---|---|
-| Base URL | `NUXT_PUBLIC_API_URL` → fallback `http://localhost:8000/api` |
+| Base URL | `NUXT_PUBLIC_API_URL` → fallback `/api/v1` |
+| Server API URL | `NUXT_API_URL` → fallback `http://localhost:8000/api/v1` |
 | Store Header | `X-Store` → `NUXT_PUBLIC_STORE_SLUG` → fallback `clothing` |
 | Auth Header | Sanctum `laravel_session` cookie handled automatically |
 | 401 Handler | Redirects to `/login` via `nuxt-auth-sanctum` |

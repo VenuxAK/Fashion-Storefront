@@ -23,20 +23,20 @@ export default defineNuxtConfig({
     ],
     server: {
       proxy: {
-        '/api': { target: 'http://localhost:8000', changeOrigin: true },
-        '/sanctum': { target: 'http://localhost:8000', changeOrigin: true },
-        '/storage': { target: 'http://localhost:8000', changeOrigin: true },
+        '/api': { target: process.env.NUXT_PROXY_TARGET || 'http://localhost:8000', changeOrigin: true },
+        '/sanctum': { target: process.env.NUXT_PROXY_TARGET || 'http://localhost:8000', changeOrigin: true },
+        '/storage': { target: process.env.NUXT_PROXY_TARGET || 'http://localhost:8000', changeOrigin: true },
       },
     },
   },
 
   sanctum: {
-    baseUrl: 'http://localhost:3000',
+    baseUrl: process.env.NUXT_PUBLIC_BASE_URL || 'http://localhost:3000',
     endpoints: {
       csrf: '/sanctum/csrf-cookie',
-      login: '/api/customer/login',
-      logout: '/api/customer/logout',
-      user: '/api/customer/me',
+      login: '/api/v1/customer/login',
+      logout: '/api/v1/customer/logout',
+      user: '/api/v1/customer/me',
     },
     redirect: {
       onLogin: '/',
@@ -69,8 +69,9 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    apiUrl: process.env.NUXT_API_URL || 'http://localhost:8000/api/v1',
     public: {
-      apiUrl: process.env.NUXT_PUBLIC_API_URL || '/api',
+      apiUrl: process.env.NUXT_PUBLIC_API_URL || '/api/v1',
       storeSlug: process.env.NUXT_PUBLIC_STORE_SLUG || 'clothing',
       stripeKey: process.env.NUXT_PUBLIC_STRIPE_KEY || '',
     },
