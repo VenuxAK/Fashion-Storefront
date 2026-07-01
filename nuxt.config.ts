@@ -17,6 +17,14 @@ export default defineNuxtConfig({
     'nuxt-swiper'
   ],
 
+  routeRules: {
+    '/products/**': { isr: 60 },
+    '/shop/**': { isr: 60 },
+    '/categories/**': { isr: 60 },
+    // Dashboard/My profile pages are dynamic
+    '/my/**': { ssr: false }
+  },
+
   vite: {
     plugins: [
       tailwindcss()
