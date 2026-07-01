@@ -11,7 +11,7 @@ const { notify } = useNotify()
 
 const { data: orderData, pending, refresh } = await useAsyncData(`order-${route.params.id}`, () => getOrderDetails(route.params.id as string))
 
-const order = computed(() => orderData.value?.data || null)
+const order = computed(() => (orderData.value as any)?.data || null)
 const { url } = useImage()
 
 const isCancelling = ref(false)

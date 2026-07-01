@@ -15,7 +15,7 @@ const { data: productData, error } = await useAsyncData(
   () => getProductBySlug(route.params.slug as string)
 )
 
-const product = computed(() => productData.value?.data || null)
+const product = computed(() => (productData.value as any)?.data || null)
 
 const quantity = ref(1)
 const selectedSize = ref('')
@@ -29,7 +29,7 @@ const { url } = useImage()
 const allImages = computed<string[]>(() => {
   const imgs: string[] = []
   if (product.value?.image) imgs.push(url(product.value.image))
-  product.value?.variants?.forEach(v => {
+  product.value?.variants?.forEach((v: any) => {
     const img = v.image ? url(v.image) : null
     if (img && !imgs.includes(img)) imgs.push(img)
   })
@@ -40,25 +40,25 @@ const selectedImage = computed(() => allImages.value[selectedImageIndex.value] |
 
 // Variant: extract real sizes/colors from API data
 const sizes = computed(() => {
-  const set = new Set(product.value?.variants?.map(v => v.size).filter(Boolean) as string[])
+  const set = new Set(product.value?.variants?.map((v: any) => v.size).filter(Boolean) as string[])
   return [...set]
 })
 
 const colors = computed(() => {
-  const set = new Set(product.value?.variants?.map(v => v.color).filter(Boolean) as string[])
+  const set = new Set(product.value?.variants?.map((v: any) => v.color).filter(Boolean) as string[])
   return [...set]
 })
 
 const needsSelection = computed(() => {
-  return !!(product.value?.variants?.some(v => v.size) || product.value?.variants?.some(v => v.color))
+  return !!(product.value?.variants?.some((v: any) => v.size) || product.value?.variants?.some((v: any) => v.color))
 })
 
 const selectedVariant = computed(() => {
   if (!product.value?.variants?.length) return null
   if (!needsSelection.value) {
-    return product.value.variants.find(v => (v.stock_quantity || 0) > 0) || product.value.variants[0]
+    return product.value.variants.find((v: any) => (v.stock_quantity || 0) > 0) || product.value.variants[0]
   }
-  return product.value.variants.find(v =>
+  return product.value.variants.find((v: any) =>
     (!selectedSize.value || v.size === selectedSize.value) &&
     (!selectedColor.value || v.color === selectedColor.value)
   ) || null

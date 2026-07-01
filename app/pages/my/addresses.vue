@@ -9,7 +9,7 @@ const { getAddresses, createAddress } = useCheckout() // Reusing from useCheckou
 const api = useApi() // For delete and default actions
 const { notify } = useNotify()
 
-const addresses = ref([])
+const addresses = ref<any[]>([])
 const isLoading = ref(false)
 const isAddingAddress = ref(false)
 

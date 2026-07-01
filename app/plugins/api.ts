@@ -24,7 +24,7 @@ export default defineNuxtPlugin(() => {
       const method = (options.method || 'GET').toUpperCase()
 
       // Always send X-Store header for store scoping.
-      options.headers = { ...options.headers, 'X-Store': storeSlug }
+      options.headers = { ...options.headers, 'X-Store': storeSlug } as any
 
       if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
         if (!csrfFetched) {
@@ -38,7 +38,7 @@ export default defineNuxtPlugin(() => {
           options.headers = {
             ...options.headers,
             'X-XSRF-TOKEN': xsrfToken.value,
-          }
+          } as any
         }
       }
     },
@@ -51,6 +51,8 @@ export default defineNuxtPlugin(() => {
     onResponseError({ response }) {
       if (response.status === 401) {
         navigateTo('/login')
+      } else if (response.status === 404 && response._data?.message?.includes('inactive')) {
+        showError({ statusCode: 503, statusMessage: 'Store Currently Unavailable', fatal: true })
       } else if (response.status === 503 || response.status === 504) {
         const { notify } = useNotify()
         notify('Service temporarily unavailable. Please try again later.', 'error')

@@ -20,12 +20,12 @@ const handleUpdate = async () => {
   isLoading.value = true
   message.value = { type: '', text: '' }
   try {
-    const data = { ...form }
+    const data = { ...form } as Record<string, any>
     if (!data.password) {
       delete data.password
       delete data.password_confirmation
     }
-    await updateProfile(data)
+    await updateProfile(data as any)
     message.value = { type: 'success', text: 'Profile updated successfully.' }
   } catch (err: any) {
     message.value = { type: 'error', text: err.data?.message || 'Failed to update profile.' }
@@ -40,7 +40,7 @@ const handleUpdate = async () => {
     <div class="flex flex-col lg:flex-row gap-16">
       <UserNav />
 
-      <main class="flex-grow space-y-12">
+      <main class="grow space-y-12">
         <div class="space-y-4 border-b border-gray-100 pb-8">
           <h1 class="text-3xl font-bold uppercase tracking-tighter">Profile Settings</h1>
           <p class="text-gray-500 text-xs uppercase tracking-[0.3em]">Update your personal information</p>

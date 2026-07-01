@@ -9,8 +9,10 @@ const currentPage = ref(parseInt(route.query.page as string) || 1)
 const selectedCategory = ref(route.query.category || '')
 const searchQuery = ref(route.query.search || '')
 const debouncedSearchQuery = refDebounced(searchQuery, 500)
-const priceRange = ref(1000)
-const debouncedPriceRange = refDebounced(priceRange, 500)
+const minPrice = ref<number | null>(null)
+const maxPrice = ref<number | null>(null)
+const debouncedMinPrice = refDebounced(minPrice, 500)
+const debouncedMaxPrice = refDebounced(maxPrice, 500)
 const sortBy = ref('created_at-desc')
 const viewMode = ref<'grid' | 'list'>('grid')
 
@@ -34,10 +36,11 @@ const { data: productsData, refresh: refreshProducts } = await useAsyncData(
     category_slug: selectedCategory.value,
     brand_id: selectedBrands.value.length ? selectedBrands.value.join(',') : undefined,
     search: debouncedSearchQuery.value,
-    max_price: debouncedPriceRange.value,
+    min_price: debouncedMinPrice.value,
+    max_price: debouncedMaxPrice.value,
     sort: sortBy.value
   }),
-  { watch: [currentPage, selectedCategory, selectedBrands, debouncedSearchQuery, debouncedPriceRange, sortBy] }
+  { watch: [currentPage, selectedCategory, selectedBrands, debouncedSearchQuery, debouncedMinPrice, debouncedMaxPrice, sortBy] }
 )
 
 const { data: categoriesData } = await useAsyncData('shop-categories', () => getCategories())
@@ -141,20 +144,21 @@ useSeoMeta({
             <!-- Filter by Price -->
             <div class="space-y-4">
               <h3 class="text-sm font-bold text-gray-900 mb-2">Price Range</h3>
-              <div class="space-y-4">
+              <div class="flex gap-2">
                 <input 
-                  v-model="priceRange" 
-                  type="range" 
-                  class="w-full accent-rose-500 cursor-pointer h-1.5 bg-gray-200 rounded-lg appearance-none" 
-                  min="0" 
-                  max="1000"
-                  step="10"
+                  v-model="minPrice" 
+                  type="number" 
+                  placeholder="Min ($)"
+                  class="w-full text-sm border-gray-200 rounded-lg focus:ring-rose-500 focus:border-rose-500" 
+                  min="0"
                 >
-                <div class="flex justify-between items-center text-sm">
-                  <span class="text-gray-500 font-medium">$0</span>
-                  <span class="text-rose-500 font-bold">${{ priceRange }}</span>
-                  <span class="text-gray-500 font-medium">$1000</span>
-                </div>
+                <input 
+                  v-model="maxPrice" 
+                  type="number" 
+                  placeholder="Max ($)"
+                  class="w-full text-sm border-gray-200 rounded-lg focus:ring-rose-500 focus:border-rose-500" 
+                  min="0"
+                >
               </div>
             </div>
 

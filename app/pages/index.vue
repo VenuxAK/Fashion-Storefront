@@ -21,7 +21,7 @@ const categories = computed(() => {
 })
 
 const childCategories = computed(() => {
-  const allChildren = categories.value.flatMap((cat: any) => cat.children || [])
+  const allCategories = categories.value || []
   const placeholders = [
     'https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?q=80&w=400&auto=format&fit=crop', // Men
     'https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=400&auto=format&fit=crop', // Women
@@ -29,9 +29,9 @@ const childCategories = computed(() => {
     'https://images.unsplash.com/photo-1509319117193-57bab727e09d?q=80&w=400&auto=format&fit=crop', // Shoes
     'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=400&auto=format&fit=crop'  // Bags
   ]
-  return allChildren.map((cat: any, index: number) => ({
+  return allCategories.map((cat: any, index: number) => ({
     ...cat,
-    image: placeholders[index % placeholders.length]
+    image: cat.image_url || placeholders[index % placeholders.length]
   }))
 })
 

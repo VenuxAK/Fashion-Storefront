@@ -8,7 +8,7 @@ definePageMeta({
 const { getOrders } = useProfile()
 const { data: ordersData, pending } = await useAsyncData('my-orders', () => getOrders())
 
-const orders = computed(() => ordersData.value?.data || [])
+const orders = computed(() => (ordersData.value as any)?.data || [])
 const { url } = useImage()
 
 const getStatusColor = (status: string) => {
