@@ -22,7 +22,11 @@ export default defineNuxtConfig({
     '/shop/**': { isr: 60 },
     '/categories/**': { isr: 60 },
     // Dashboard/My profile pages are dynamic
-    '/my/**': { ssr: false }
+    '/my/**': { ssr: false },
+    // Production API Proxies (Vite proxy overrides these locally)
+    '/api/**': { proxy: 'https://simp-commerce-api.onrender.com/api/**' },
+    '/sanctum/**': { proxy: 'https://simp-commerce-api.onrender.com/sanctum/**' },
+    '/storage/**': { proxy: 'https://simp-commerce-api.onrender.com/storage/**' }
   },
 
   vite: {
@@ -39,7 +43,7 @@ export default defineNuxtConfig({
   },
 
   sanctum: {
-    baseUrl: process.env.NUXT_PUBLIC_SANCTUM_BASE_URL || process.env.NUXT_PUBLIC_BASE_URL || 'https://simp-commerce-api.onrender.com',
+    baseUrl: process.env.NUXT_PUBLIC_BASE_URL || '',
     endpoints: {
       csrf: '/sanctum/csrf-cookie',
       login: '/api/v1/customer/login',
@@ -77,9 +81,9 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    apiUrl: process.env.NUXT_API_URL || 'https://simp-commerce-api.onrender.com/api/v1',
+    apiUrl: process.env.NUXT_API_URL || '/api/v1',
     public: {
-      apiUrl: process.env.NUXT_PUBLIC_API_URL || 'https://simp-commerce-api.onrender.com/api/v1',
+      apiUrl: process.env.NUXT_PUBLIC_API_URL || '/api/v1',
       storeSlug: process.env.NUXT_PUBLIC_STORE_SLUG || 'clothing',
       stripeKey: process.env.NUXT_PUBLIC_STRIPE_KEY || '',
     },
