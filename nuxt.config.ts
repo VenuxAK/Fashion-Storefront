@@ -39,7 +39,7 @@ export default defineNuxtConfig({
   },
 
   sanctum: {
-    baseUrl: process.env.NUXT_PUBLIC_BASE_URL || 'http://localhost:3000',
+    baseUrl: process.env.NUXT_PUBLIC_SANCTUM_BASE_URL || process.env.NUXT_PUBLIC_BASE_URL || 'https://simp-commerce-api.onrender.com',
     endpoints: {
       csrf: '/sanctum/csrf-cookie',
       login: '/api/v1/customer/login',
@@ -77,9 +77,9 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    apiUrl: process.env.NUXT_API_URL || 'http://localhost:8000/api/v1',
+    apiUrl: process.env.NUXT_API_URL || 'https://simp-commerce-api.onrender.com/api/v1',
     public: {
-      apiUrl: process.env.NUXT_PUBLIC_API_URL || '/api/v1',
+      apiUrl: process.env.NUXT_PUBLIC_API_URL || 'https://simp-commerce-api.onrender.com/api/v1',
       storeSlug: process.env.NUXT_PUBLIC_STORE_SLUG || 'clothing',
       stripeKey: process.env.NUXT_PUBLIC_STRIPE_KEY || '',
     },
