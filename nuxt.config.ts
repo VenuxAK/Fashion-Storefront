@@ -12,7 +12,6 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/image',
     '@nuxtjs/google-fonts',
-    '@nuxtjs/i18n',
     '@pinia/nuxt',
     'nuxt-auth-sanctum',
     'nuxt-swiper'
@@ -94,21 +93,6 @@ export default defineNuxtConfig({
       Inter: [400, 500, 600]
     },
     display: 'swap'
-  },
-
-  i18n: {
-    locales: [
-      { code: 'en', iso: 'en-US', file: 'en.json', name: 'English' },
-      { code: 'my', iso: 'my-MM', file: 'my.json', name: 'မြန်မာ' }
-    ],
-    defaultLocale: 'en',
-    langDir: 'locales',
-    strategy: 'prefix_except_default',
-    detectBrowserLanguage: {
-      useCookie: true,
-      cookieKey: 'i18n_redirected',
-      alwaysRedirect: true
-    }
   },
 
   runtimeConfig: {

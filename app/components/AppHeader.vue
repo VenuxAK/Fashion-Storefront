@@ -13,18 +13,13 @@ const { y } = useWindowScroll()
 const isScrolled = computed(() => y.value > 50)
 
 const isMenuOpen = ref(false)
-const { locale, setLocale } = useI18n()
 
 const navLinks = [
-  { name: 'common.home', href: '/' },
-  { name: 'common.shop', href: '/shop' },
-  { name: 'common.about', href: '/about' },
-  { name: 'common.contact', href: '/contact' }
+  { label: 'Home', href: '/' },
+  { label: 'Shop', href: '/shop' },
+  { label: 'About', href: '/about' },
+  { label: 'Contact', href: '/contact' }
 ]
-
-const toggleLocale = () => {
-  setLocale(locale.value === 'en' ? 'my' : 'en')
-}
 </script>
 
 <template>
@@ -51,16 +46,12 @@ const toggleLocale = () => {
           :to="link.href"
           class="text-sm font-medium uppercase tracking-widest hover:text-accent transition-colors"
         >
-          {{ $t(link.name) }}
+          {{ link.label }}
         </NuxtLink>
       </nav>
 
       <!-- Icons -->
       <div class="flex items-center space-x-3 md:space-x-5">
-        <button @click="toggleLocale" class="text-[10px] md:text-xs font-bold uppercase hover:text-accent">
-          {{ locale === 'en' ? 'MY' : 'EN' }}
-        </button>
-        
         <button 
           @click="uiStore.isSearchOpen = true"
           class="hover:text-accent transition-colors"
@@ -123,7 +114,7 @@ const toggleLocale = () => {
               class="text-lg font-medium uppercase tracking-widest border-b border-gray-100 pb-2"
               @click="isMenuOpen = false"
             >
-              {{ $t(link.name) }}
+              {{ link.label }}
             </NuxtLink>
           </nav>
         </div>

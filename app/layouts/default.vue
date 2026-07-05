@@ -1,9 +1,8 @@
 <script setup lang="ts">
 const route = useRoute()
-const localePath = useLocalePath()
 
 const isTransparentHeaderPage = computed(() => {
-  return route.path === localePath('/') || route.path === localePath('/') + '/'
+  return route.path === '/'
 })
 </script>
 

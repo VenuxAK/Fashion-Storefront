@@ -47,7 +47,7 @@ onMounted(() => {
       >
         <!-- Header -->
         <div class="p-6 border-b border-gray-100 flex items-center justify-between">
-          <h2 class="text-xl font-bold uppercase tracking-tight">{{ $t('common.cart') }}</h2>
+          <h2 class="text-xl font-bold uppercase tracking-tight">My Cart</h2>
           <button @click="uiStore.closeMiniCart" class="hover:text-accent transition-colors">
             <X class="w-6 h-6" />
           </button>
@@ -57,13 +57,13 @@ onMounted(() => {
         <div class="grow overflow-y-auto p-6 space-y-6">
           <div v-if="cartStore.items.length === 0" class="h-full flex flex-col items-center justify-center text-center space-y-4">
             <ShoppingBag class="w-16 h-16 text-gray-200" />
-            <p class="text-gray-500 uppercase tracking-widest text-sm">{{ $t('common.empty_cart') }}</p>
+            <p class="text-gray-500 uppercase tracking-widest text-sm">Your cart is empty</p>
             <NuxtLink 
               to="/shop" 
               class="btn btn-outline"
               @click="uiStore.closeMiniCart"
             >
-              {{ $t('common.shop') }}
+              Shop
             </NuxtLink>
           </div>
 
@@ -90,7 +90,7 @@ onMounted(() => {
         <!-- Footer -->
         <div v-if="cartStore.items.length > 0" class="p-6 border-t border-gray-100 space-y-4">
           <div class="flex justify-between items-center text-lg font-bold uppercase">
-            <span>{{ $t('common.subtotal') }}</span>
+            <span>Subtotal</span>
             <span>${{ cartStore.subtotal.toFixed(2) }}</span>
           </div>
           <p class="text-xs text-gray-400 text-center uppercase tracking-widest">
@@ -102,14 +102,14 @@ onMounted(() => {
               class="btn btn-outline w-full py-4 text-xs font-bold tracking-widest uppercase"
               @click="uiStore.closeMiniCart"
             >
-              {{ $t('common.view_cart') }}
+              View Cart
             </NuxtLink>
             <NuxtLink 
               to="/checkout" 
               class="btn btn-primary w-full py-4 text-xs font-bold tracking-widest uppercase"
               @click="uiStore.closeMiniCart"
             >
-              {{ $t('common.checkout') }}
+              Checkout
             </NuxtLink>
           </div>
         </div>
