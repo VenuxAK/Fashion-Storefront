@@ -6,10 +6,13 @@ definePageMeta({
 })
 
 const { getOrders } = useProfile()
+const { markAllRead } = useOrderNotifications()
 const { data: ordersData, pending } = await useAsyncData('my-orders', () => getOrders(), {
   getCachedData: (key) => useNuxtData(key).data.value,
   timeout: 10000,
 })
+
+onMounted(() => markAllRead())
 
 useSeoMeta({
   title: 'My Orders | SimpCommerce',

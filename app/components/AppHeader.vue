@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Search, User, ShoppingBag, Menu, X, Heart } from 'lucide-vue-next'
+import { Search, User, ShoppingBag, Menu, X, Heart, Bell } from 'lucide-vue-next'
 import { useWindowScroll } from '@vueuse/core'
 import { useUiStore } from '~/stores/ui'
 import { useCartStore } from '~/stores/cart'
@@ -13,6 +13,7 @@ const { y } = useWindowScroll()
 const isScrolled = computed(() => y.value > 50)
 
 const isMenuOpen = ref(false)
+const { unreadCount } = useOrderNotifications()
 
 const navLinks = [
   { label: 'Home', href: '/' },
@@ -59,6 +60,19 @@ const navLinks = [
           <Search class="w-4 h-4 md:w-5 md:h-5" />
         </button>
         
+        <NuxtLink
+          :to="isLoggedIn ? '/my/orders' : '/login'"
+          class="hover:text-accent transition-colors relative"
+        >
+          <Bell class="w-4 h-4 md:w-5 md:h-5" />
+          <span
+            v-if="unreadCount > 0"
+            class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[8px] md:text-[10px] min-w-[16px] h-4 rounded-full flex items-center justify-center px-1"
+          >
+            {{ unreadCount > 99 ? '99+' : unreadCount }}
+          </span>
+        </NuxtLink>
+
         <NuxtLink 
           :to="isLoggedIn ? '/my/profile' : '/login'" 
           class="hover:text-accent transition-colors flex items-center space-x-2"
