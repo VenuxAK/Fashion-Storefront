@@ -13,6 +13,7 @@ const { url } = useImage()
 
 const getStatusColor = (status: string) => {
   switch (status) {
+    case 'pending': return 'bg-yellow-100 text-yellow-700'
     case 'processing': return 'bg-blue-100 text-blue-600'
     case 'shipped': return 'bg-purple-100 text-purple-600'
     case 'delivered': return 'bg-green-100 text-green-600'

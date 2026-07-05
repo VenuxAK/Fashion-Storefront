@@ -16,13 +16,9 @@ const isPlacingOrder = ref(false)
 const orderNotes = ref('')
 const idempotencyKey = ref(crypto.randomUUID())
 
-const paymentMethod = ref<'cod' | 'stripe'>('cod')
+const paymentMethod = ref<'cash' | 'stripe'>('cash')
 
 // Stripe state
-const stripeLoading = ref(false)
-const stripeClientSecret = ref<string | null>(null)
-const stripeIntentId = ref<string | null>(null)
-const stripeCardRef = ref<any>(null)
 const isPlacingStripeOrder = ref(false) // Prevents double-order bug
 
 const newAddress = reactive({
@@ -54,38 +50,18 @@ const handleAddAddress = async () => {
   finally { isLoading.value = false }
 }
 
-const initStripe = async () => {
-  stripeLoading.value = true
-  try {
-    const response: any = await createPaymentIntent('stripe')
-    stripeClientSecret.value = response.client_secret
-    stripeIntentId.value = response.transaction_id
-  } catch { notify('Failed to initiate payment.', 'error') }
-  finally { stripeLoading.value = false }
+const onPaymentMethodChange = async (method: 'cash' | 'stripe') => {
+  paymentMethod.value = method
 }
 
-const onPaymentMethodChange = async (method: 'cod' | 'stripe') => {
-  paymentMethod.value = method
-  if (method === 'stripe' && !stripeClientSecret.value) await initStripe()
-}
+const isWaitingForPayment = ref(false)
 
 const handlePlaceOrder = async () => {
   if (!selectedAddressId.value) { notify('Please select a shipping address.', 'error'); return }
-  if (paymentMethod.value === 'stripe' && !stripeIntentId.value) { notify('Please wait for the payment form.', 'error'); return }
-  if (isPlacingStripeOrder.value) return // Guard: prevent double-submit
+  if (isPlacingStripeOrder.value || isPlacingOrder.value) return
 
-  // Stripe: confirm payment first, then place order in one flow.
-  if (paymentMethod.value === 'stripe') {
-    if (!stripeCardRef.value) { notify('Payment form not ready.', 'error'); return }
-    isPlacingStripeOrder.value = true
-    isPlacingOrder.value = true
-    const confirmed = await stripeCardRef.value.confirmPayment()
-    if (!confirmed) {
-      isPlacingOrder.value = false
-      return
-    }
-    // Payment confirmed — continue to place order below.
-  }
+  isPlacingOrder.value = true
+  if (paymentMethod.value === 'stripe') isPlacingStripeOrder.value = true
 
   try {
     const orderData: any = {
@@ -93,16 +69,27 @@ const handlePlaceOrder = async () => {
       notes: orderNotes.value,
       payment_method: paymentMethod.value,
     }
-    if (paymentMethod.value === 'stripe') orderData.payment_intent_id = stripeIntentId.value
+
+    if (paymentMethod.value === 'stripe') {
+      orderData.success_url = `${window.location.origin}/my/orders/__ORDER_ID__`
+      orderData.cancel_url = `${window.location.origin}/checkout`
+    }
 
     const response: any = await placeOrder(orderData, idempotencyKey.value)
 
     cartStore.resetLocalCart()
-    const orderNumber = response.order?.order_number || response.data?.order_number
-    navigateTo(`/order-success?number=${orderNumber}&method=${paymentMethod.value}`)
+
+    if (response.checkout_url) {
+      window.open(response.checkout_url, '_blank')
+      isPlacingOrder.value = false
+      isPlacingStripeOrder.value = false
+      isWaitingForPayment.value = true
+    } else {
+      const orderNumber = response.order?.order_number || response.data?.order_number
+      navigateTo(`/order-success?number=${orderNumber}&method=cash`)
+    }
   } catch (error: any) {
     notify(error.data?.message || 'Failed to place order.', 'error')
-  } finally {
     isPlacingOrder.value = false
     isPlacingStripeOrder.value = false
   }
@@ -119,7 +106,7 @@ useSeoMeta({ title: 'Secure Checkout | SimpCommerce', description: 'Complete you
       <h1 class="text-3xl md:text-4xl font-bold uppercase tracking-tighter mb-2">Checkout</h1>
       <p class="text-gray-500 text-xs uppercase tracking-[0.3em] mb-12">Complete your order</p>
 
-      <div class="grid grid-cols-1 lg:grid-cols-5 gap-12">
+      <div v-if="!isWaitingForPayment" class="grid grid-cols-1 lg:grid-cols-5 gap-12">
         <!-- Left: 3 columns -->
         <div class="lg:col-span-3 space-y-12">
 
@@ -191,16 +178,16 @@ useSeoMeta({ title: 'Secure Checkout | SimpCommerce', description: 'Complete you
           <div class="space-y-5">
             <h3 class="text-sm font-bold uppercase tracking-widest">Payment Method</h3>
 
-            <!-- COD -->
-            <div @click="onPaymentMethodChange('cod')"
+            <!-- Cash on Delivery -->
+            <div @click="onPaymentMethodChange('cash')"
               class="border-2 p-5 cursor-pointer transition-all"
-              :class="[paymentMethod === 'cod' ? 'border-black bg-black/5' : 'border-gray-100 hover:border-gray-300']"
+              :class="[paymentMethod === 'cash' ? 'border-black bg-black/5' : 'border-gray-100 hover:border-gray-300']"
             >
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-4">
                   <div class="w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center"
-                    :class="[paymentMethod === 'cod' ? 'border-black' : 'border-gray-300']">
-                    <div v-if="paymentMethod === 'cod'" class="w-2 h-2 bg-black rounded-full"></div>
+                    :class="[paymentMethod === 'cash' ? 'border-black' : 'border-gray-300']">
+                    <div v-if="paymentMethod === 'cash'" class="w-2 h-2 bg-black rounded-full"></div>
                   </div>
                   <div>
                     <span class="text-sm font-semibold">Cash on Delivery</span>
@@ -224,26 +211,13 @@ useSeoMeta({ title: 'Secure Checkout | SimpCommerce', description: 'Complete you
                   </div>
                   <div>
                     <span class="text-sm font-semibold">Pay with Card</span>
-                    <p class="text-[11px] text-gray-400 mt-0.5">Secure payment via Stripe</p>
+                    <p class="text-[11px] text-gray-400 mt-0.5">Secure payment via Stripe Checkout</p>
                   </div>
                 </div>
                 <div class="flex gap-1.5">
                   <span class="text-[9px] px-2 py-0.5 bg-blue-50 text-blue-700 font-bold tracking-wider uppercase">Visa</span>
                   <span class="text-[9px] px-2 py-0.5 bg-orange-50 text-orange-700 font-bold tracking-wider uppercase">MC</span>
                   <span class="text-[9px] px-2 py-0.5 bg-indigo-50 text-indigo-700 font-bold tracking-wider uppercase">Amex</span>
-                </div>
-              </div>
-
-              <div v-if="paymentMethod === 'stripe'" class="border-t border-gray-100 mt-5 pt-5">
-                <!-- Loading spinner while initializing -->
-                <div v-if="stripeLoading" class="flex items-center justify-center gap-2.5 py-8">
-                  <div class="w-4 h-4 border-2 border-gray-300 border-t-primary rounded-full animate-spin"></div>
-                  <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Preparing payment form...</span>
-                </div>
-
-                <!-- Card form -->
-                <div v-if="!stripeLoading && stripeClientSecret">
-                  <StripeCardForm ref="stripeCardRef" :client-secret="stripeClientSecret" />
                 </div>
               </div>
             </div>
@@ -304,6 +278,27 @@ useSeoMeta({ title: 'Secure Checkout | SimpCommerce', description: 'Complete you
             <p class="text-[10px] text-gray-400 text-center tracking-wider">By placing an order, you agree to our terms &amp; conditions.</p>
           </div>
         </div>
+      </div>
+
+      <div v-else class="max-w-2xl mx-auto text-center space-y-8 py-12 animate-fade-in">
+        <div class="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center">
+          <CreditCard class="w-8 h-8 text-gray-500" />
+        </div>
+        <div class="space-y-4">
+          <h2 class="text-2xl font-bold uppercase tracking-widest">Payment Window Opened</h2>
+          <p class="text-sm text-gray-500 max-w-md mx-auto">
+            We've opened a secure Stripe payment window in a new tab. Please complete your payment there to finalize your order.
+          </p>
+        </div>
+        <div class="p-6 bg-gray-50 border border-gray-100 text-left text-sm text-gray-600 max-w-sm mx-auto space-y-4">
+          <div class="flex items-start gap-3">
+            <ShieldCheck class="w-5 h-5 text-green-600 shrink-0" />
+            <p>Your payment is processed securely by Stripe. We do not store your card details.</p>
+          </div>
+        </div>
+        <p class="text-[10px] uppercase tracking-widest text-gray-400">
+          Once completed, you can safely close this window.
+        </p>
       </div>
     </div>
   </div>

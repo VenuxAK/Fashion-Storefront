@@ -30,8 +30,18 @@ const handleCancel = async () => {
   }
 }
 
+const paymentMethodLabel = (method?: string) => {
+  switch (method) {
+    case 'stripe': return 'Card (Stripe)'
+    case 'cash': return 'Cash on Delivery'
+    case 'transfer': return 'Bank Transfer'
+    default: return 'COD'
+  }
+}
+
 const getStatusColor = (status: string) => {
   switch (status) {
+    case 'pending': return 'bg-yellow-100 text-yellow-700'
     case 'processing': return 'bg-blue-100 text-blue-600'
     case 'shipped': return 'bg-purple-100 text-purple-600'
     case 'delivered': return 'bg-green-100 text-green-600'
@@ -251,7 +261,7 @@ const currentStepIndex = computed(() => {
                 </div>
                 <div class="flex justify-between text-sm">
                   <span class="text-gray-500">Payment Method</span>
-                  <span class="font-bold uppercase text-[10px]">COD</span>
+                  <span class="font-bold uppercase text-[10px]">{{ paymentMethodLabel(order.payment?.method) }}</span>
                 </div>
                 <div class="border-t border-gray-100 pt-4 mt-2 flex justify-between items-center text-xl font-bold uppercase">
                   <span>Total</span>
