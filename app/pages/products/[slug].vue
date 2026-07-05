@@ -211,12 +211,12 @@ watch(product, (newVal) => {
         <div class="pt-10 border-t border-gray-100 space-y-4">
           <div class="flex items-center text-xs uppercase font-bold tracking-widest">
             <span class="text-gray-400 w-24">SKU:</span>
-            <span>{{ selectedVariant?.sku || 'SIMP-' + product.id }}</span>
+            <span>{{ (selectedVariant as any)?.sku || 'SIMP-' + product.id }}</span>
           </div>
           <div v-if="selectedVariant" class="flex items-center text-xs uppercase font-bold tracking-widest">
             <span class="text-gray-400 w-24">Stock:</span>
-            <span :class="selectedVariant.stock_quantity > 0 ? 'text-green-600' : 'text-red-500'">
-              {{ selectedVariant.stock_quantity > 0 ? selectedVariant.stock_quantity + ' available' : 'Out of stock' }}
+            <span :class="(selectedVariant.stock_quantity ?? 0) > 0 ? 'text-green-600' : 'text-red-500'">
+              {{ (selectedVariant.stock_quantity ?? 0) > 0 ? selectedVariant.stock_quantity + ' available' : 'Out of stock' }}
             </span>
           </div>
           <div class="flex items-center text-xs uppercase font-bold tracking-widest">

@@ -78,3 +78,26 @@ export interface Order {
   shipping_address?: Address
   items?: OrderItem[]
 }
+
+export interface ApiResponse<T> {
+  data: T
+  message?: string
+}
+
+export interface PaginatedResponse<T> {
+  data: T[]
+  meta: {
+    current_page: number
+    last_page: number
+    from: number
+    to: number
+    total: number
+    per_page: number
+  }
+  links?: {
+    first?: string
+    last?: string
+    prev?: string | null
+    next?: string | null
+  }
+}

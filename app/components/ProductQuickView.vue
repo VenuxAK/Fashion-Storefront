@@ -258,8 +258,8 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 
                 <!-- Stock indicator -->
                 <div v-if="selectedVariant" class="text-[10px] font-bold uppercase tracking-widest">
-                  <span v-if="selectedVariant.stock_quantity > 0" class="text-green-600">
-                    {{ selectedVariant.stock_quantity }} in stock
+                  <span v-if="selectedVariant?.stock_quantity! > 0" class="text-green-600">
+                    {{ selectedVariant?.stock_quantity }} in stock
                   </span>
                   <span v-else class="text-red-500">Out of stock</span>
                 </div>

@@ -254,6 +254,7 @@ useSeoMeta({
               :key="product.id" 
               :product="product" 
               :view="viewMode"
+              v-memo="[product.id, product.base_price, product.is_sale, product.is_new]"
             />
           </div>
           <div v-else class="py-20 text-center bg-white rounded-xl shadow-[0_1px_3px_rgba(3,0,71,0.09)]">

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Mail, Phone, MapPin } from 'lucide-vue-next'
+const { notify } = useNotify()
 
 useSeoMeta({
   title: 'Contact | SimpCommerce',

@@ -73,7 +73,7 @@ const toggleLocale = () => {
           class="hover:text-accent transition-colors flex items-center space-x-2"
         >
           <User class="w-4 h-4 md:w-5 md:h-5" />
-          <span v-if="isLoggedIn && user" class="hidden lg:block text-[10px] font-bold uppercase tracking-widest max-w-[80px] truncate">
+          <span v-if="isLoggedIn && user" class="hidden lg:block text-[10px] font-bold uppercase tracking-widest max-w-20 truncate">
             {{ user.name }}
           </span>
         </NuxtLink>

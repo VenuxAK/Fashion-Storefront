@@ -87,6 +87,24 @@ export const useCartStore = defineStore('cart', () => {
       return
     }
 
+    const optimisticItem: CartItem = {
+      id: variant.id,
+      variant_id: variant.id,
+      name: product?.name || 'Unknown Product',
+      price: 0,
+      quantity,
+      image: variant?.image || product?.image,
+      color: variant?.color,
+      size: variant?.size
+    }
+    const existingIdx = items.value.findIndex((i: any) => i.variant_id === variant.id)
+    const existingItem = existingIdx >= 0 ? items.value[existingIdx] : null
+    if (existingItem) {
+      existingItem.quantity += quantity
+    } else {
+      items.value.push(optimisticItem)
+    }
+
     try {
       await api('/cart', {
         method: 'POST',
@@ -97,6 +115,15 @@ export const useCartStore = defineStore('cart', () => {
       })
       await fetchCart()
     } catch (error: any) {
+      if (existingItem) {
+        existingItem.quantity -= quantity
+        if (existingItem.quantity <= 0) {
+          const rollbackIdx = items.value.findIndex((i: any) => i.variant_id === variant.id)
+          if (rollbackIdx >= 0) items.value.splice(rollbackIdx, 1)
+        }
+      } else {
+        items.value.pop()
+      }
       const message = error?.data?.message || error?.message || 'Failed to add to cart'
       throw new Error(message)
     }

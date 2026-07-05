@@ -35,6 +35,7 @@ const imageUrl = computed(() => url(props.product.image))
 
 const {
   needsSelection: needsVariantSelection,
+  selectedVariant,
   hasStock, adjustedPrice: price,
 } = useVariantSelector(
   computed(() => Array.isArray(props.product.variants) ? props.product.variants : []),
@@ -49,7 +50,7 @@ const addToCart = async () => {
     navigateTo(`/products/${props.product.slug}`)
     return
   }
-  const variant = defaultVariant.value
+  const variant = selectedVariant.value || { id: props.product.id, price_adjustment: 0, stock_quantity: 0 }
   try {
     await cartStore.addToCart(props.product, variant, 1)
     notify(`Added ${props.product.name} to cart.`, 'success')

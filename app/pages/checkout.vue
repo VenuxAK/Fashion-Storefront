@@ -60,6 +60,9 @@ const handlePlaceOrder = async () => {
   if (!selectedAddressId.value) { notify('Please select a shipping address.', 'error'); return }
   if (isPlacingStripeOrder.value || isPlacingOrder.value) return
 
+  await cartStore.fetchCart()
+  if (cartStore.items.length === 0) { notify('Your cart is empty.', 'error'); return }
+
   isPlacingOrder.value = true
   if (paymentMethod.value === 'stripe') isPlacingStripeOrder.value = true
 
@@ -238,7 +241,7 @@ useSeoMeta({ title: 'Secure Checkout | SimpCommerce', description: 'Complete you
           <div class="bg-gray-50 p-8 space-y-6 sticky top-28">
             <h3 class="text-sm font-bold uppercase tracking-widest border-b border-gray-200 pb-4">Your Order</h3>
 
-            <div class="space-y-4 max-h-[360px] overflow-y-auto pr-2">
+            <div class="space-y-4 max-h-90 overflow-y-auto pr-2">
               <div v-for="item in cartStore.items" :key="item.id" class="flex gap-4">
                 <div class="w-14 h-18 bg-white border shrink-0">
                   <NuxtImg :src="getImageUrl(item.image || '')" format="webp" loading="lazy" fetchpriority="low" sizes="56px" class="w-full h-full object-cover" />
