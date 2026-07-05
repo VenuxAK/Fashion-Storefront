@@ -6,9 +6,15 @@ import 'swiper/css'
 import 'swiper/css/autoplay'
 const { getProducts, getCategories, getBrands } = useProduct()
 
-const { data: productsData } = await useAsyncData('products', () => getProducts({ limit: 8 }))
-const { data: categoriesData } = await useAsyncData('categories', () => getCategories())
-const { data: brandsData } = await useAsyncData('brands', () => getBrands())
+const { data: productsData, pending: productsPending } = await useAsyncData('products', () => getProducts({ limit: 8 }), {
+  getCachedData: (key) => useNuxtData(key).data.value,
+})
+const { data: categoriesData, pending: categoriesPending } = await useAsyncData('categories', () => getCategories(), {
+  getCachedData: (key) => useNuxtData(key).data.value,
+})
+const { data: brandsData, pending: brandsPending } = await useAsyncData('brands', () => getBrands(), {
+  getCachedData: (key) => useNuxtData(key).data.value,
+})
 
 const products = computed(() => {
   const raw = (productsData.value as any)?.data || productsData.value || []
@@ -50,11 +56,16 @@ useSeoMeta({
     <!-- Hero Slider -->
     <section class="relative h-screen overflow-hidden bg-gray-50">
       <div class="absolute inset-0">
-        <img 
+        <NuxtImg 
           src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2000&auto=format&fit=crop" 
           alt="Hero" 
+          format="webp"
+          loading="eager"
+          fetchpriority="high"
+          :preload="{ fetchPriority: 'high' }"
+          sizes="100vw"
           class="w-full h-full object-cover opacity-90"
-        >
+        />
         <!-- Subtle overlay for readability -->
         <div class="absolute inset-0 bg-linear-to-r from-white/40 to-transparent"></div>
       </div>
@@ -104,7 +115,7 @@ useSeoMeta({
         >
           <SwiperSlide v-for="brand in brands" :key="brand.id">
             <div class="w-full h-20 md:h-24 bg-white border border-gray-100 rounded-sm flex items-center justify-center p-4 hover:border-gray-300 transition-colors cursor-pointer">
-              <img :src="brand.logo_url || 'https://placehold.co/400x200?text='+brand.name" class="max-h-full max-w-full object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all" :alt="brand.name" />
+              <NuxtImg :src="brand.logo_url || 'https://placehold.co/400x200?text='+brand.name" format="webp" loading="lazy" fetchpriority="low" sizes="150px" class="max-h-full max-w-full object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all" :alt="brand.name" />
             </div>
           </SwiperSlide>
         </Swiper>
@@ -278,11 +289,15 @@ useSeoMeta({
           </form>
         </div>
         <div class="relative">
-          <img 
+          <NuxtImg 
             src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=1000&auto=format&fit=crop" 
             alt="Promo" 
+            format="webp"
+            loading="lazy"
+            fetchpriority="low"
+            sizes="(max-width: 1024px) 100vw, 50vw"
             class="w-full aspect-video object-cover shadow-xl rounded-sm"
-          >
+          />
           <div class="absolute -top-10 -right-10 w-32 h-32 md:w-40 md:h-40 bg-accent rounded-full flex items-center justify-center text-white rotate-12 shadow-xl">
             <div class="text-center">
               <span class="block text-2xl md:text-3xl font-bold">15%</span>

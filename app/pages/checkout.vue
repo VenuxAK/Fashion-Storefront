@@ -6,7 +6,7 @@ definePageMeta({ middleware: 'sanctum:auth' })
 const { getAddresses, createAddress, placeOrder, createPaymentIntent } = useCheckout()
 const cartStore = useCartStore()
 const { notify } = useNotify()
-const { url } = useImage()
+const { url } = useMedia()
 
 const addresses = ref<any[]>([])
 const selectedAddressId = ref<number | null>(null)
@@ -241,7 +241,7 @@ useSeoMeta({ title: 'Secure Checkout | SimpCommerce', description: 'Complete you
             <div class="space-y-4 max-h-[360px] overflow-y-auto pr-2">
               <div v-for="item in cartStore.items" :key="item.id" class="flex gap-4">
                 <div class="w-14 h-18 bg-white border shrink-0">
-                  <img :src="getImageUrl(item.image || '')" class="w-full h-full object-cover">
+                  <NuxtImg :src="getImageUrl(item.image || '')" format="webp" loading="lazy" fetchpriority="low" sizes="56px" class="w-full h-full object-cover" />
                 </div>
                 <div class="flex-1 min-w-0">
                   <p class="text-xs font-semibold truncate">{{ item.name }}</p>

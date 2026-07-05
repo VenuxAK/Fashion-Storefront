@@ -9,7 +9,7 @@ const uiStore = useUiStore()
 const cartStore = useCartStore()
 const wishlistStore = useWishlistStore()
 const { notify } = useNotify()
-const { url } = useImage()
+const { url } = useMedia()
 const { getProductBySlug } = useProduct()
 
 const product = ref<any>(null)
@@ -191,9 +191,13 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
               <!-- Image Gallery -->
               <div class="relative bg-gray-50">
                 <div class="aspect-square flex items-center justify-center overflow-hidden">
-                  <img
+                  <NuxtImg
                     :src="selectedImage"
                     :alt="product.name"
+                    format="webp"
+                    loading="eager"
+                    fetchpriority="high"
+                    sizes="(max-width: 768px) 100vw, 50vw"
                     class="w-full h-full object-cover"
                   />
                 </div>
@@ -224,7 +228,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                     class="w-14 h-14 bg-white cursor-pointer border-2 transition-colors overflow-hidden shrink-0"
                     :class="selectedImageIndex === i ? 'border-accent' : 'border-transparent hover:border-accent/50'"
                   >
-                    <img :src="img" class="w-full h-full object-cover" :class="selectedImageIndex !== i ? 'opacity-60 hover:opacity-100' : ''">
+                    <NuxtImg :src="img" format="webp" loading="lazy" fetchpriority="low" sizes="56px" class="w-full h-full object-cover" :class="selectedImageIndex !== i ? 'opacity-60 hover:opacity-100' : ''" />
                   </div>
                 </div>
               </div>

@@ -18,10 +18,14 @@ defineProps<{
   >
     <!-- Background Image -->
     <div class="absolute inset-0 bg-gray-100">
-      <img 
+      <NuxtImg 
         v-if="category.image"
         :src="category.image" 
         :alt="category.name"
+        format="webp"
+        loading="lazy"
+        fetchpriority="low"
+        sizes="sm:320px md:400px"
         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
       />
       <!-- Fallback pattern if no image -->

@@ -3,7 +3,9 @@ import { ArrowRight } from 'lucide-vue-next'
 
 const { getCategories } = useProduct()
 
-const { data: categoriesData, pending } = await useAsyncData('all-categories', () => getCategories())
+const { data: categoriesData, pending } = await useAsyncData('all-categories', () => getCategories(), {
+  getCachedData: (key) => useNuxtData(key).data.value,
+})
 
 const categories = computed(() => {
   const raw = (categoriesData.value as any)?.data || categoriesData.value || []

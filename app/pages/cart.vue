@@ -4,7 +4,7 @@ import { useCartStore } from '~/stores/cart'
 
 const cartStore = useCartStore()
 
-const { url } = useImage()
+const { url } = useMedia()
 const getImageUrl = (image: string) => url(image)
 
 onMounted(() => {
@@ -44,7 +44,7 @@ useSeoMeta({
                 <td class="py-8">
                   <div class="flex items-center space-x-6">
                     <div class="w-24 h-24 bg-gray-50 shrink-0">
-                      <img :src="getImageUrl(item.image || '')" :alt="item.name" class="w-full h-full object-cover">
+                      <NuxtImg :src="getImageUrl(item.image || '')" :alt="item.name" format="webp" loading="lazy" fetchpriority="low" sizes="96px" class="w-full h-full object-cover" />
                     </div>
                     <div class="space-y-1">
                       <h3 class="text-sm font-bold uppercase">{{ item.name }}</h3>

@@ -28,9 +28,13 @@ const props = withDefaults(defineProps<{
   >
     <!-- Background Image -->
     <div class="absolute inset-0 bg-gray-200">
-      <img 
+      <NuxtImg 
         :src="banner.image" 
         :alt="banner.title"
+        format="webp"
+        loading="lazy"
+        fetchpriority="low"
+        sizes="100vw"
         class="w-full h-full object-cover transition-transform duration-700"
       />
     </div>

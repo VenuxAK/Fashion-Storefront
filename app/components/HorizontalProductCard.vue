@@ -15,7 +15,7 @@ const props = defineProps<{
   product: Product
 }>()
 
-const { url } = useImage()
+const { url } = useMedia()
 const imageUrl = computed(() => url(props.product.image))
 
 const defaultVariant = computed(() => {
@@ -35,12 +35,15 @@ const price = computed(() => {
   <div class="flex items-center gap-4 group">
     <!-- Image Area -->
     <NuxtLink :to="`/products/${product.slug}`" class="relative w-24 h-24 sm:w-28 sm:h-28 bg-gray-100 rounded-sm overflow-hidden shrink-0 flex items-center justify-center p-2">
-      <img 
+      <NuxtImg 
         :src="imageUrl" 
         :alt="product.name" 
         loading="lazy"
+        fetchpriority="low"
+        format="webp"
+        sizes="112px"
         class="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105"
-      >
+      />
     </NuxtLink>
 
     <!-- Info Area -->

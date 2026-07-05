@@ -1,7 +1,9 @@
 <script setup lang="ts">
 const { getBrands } = useProduct()
 
-const { data: brandsData, pending } = await useAsyncData('all-brands', () => getBrands())
+const { data: brandsData, pending } = await useAsyncData('all-brands', () => getBrands(), {
+  getCachedData: (key) => useNuxtData(key).data.value,
+})
 
 const brands = computed(() => {
   const raw = (brandsData.value as any)?.data || brandsData.value || []
@@ -34,9 +36,13 @@ useSeoMeta({
           :to="`/shop?brand_id=${brand.id}`"
           class="bg-white rounded-xl shadow-[0_1px_3px_rgba(3,0,71,0.09)] hover:shadow-lg p-6 flex items-center justify-center transition-all duration-300 group border border-transparent hover:border-rose-100 aspect-4/3"
         >
-          <img 
+          <NuxtImg 
             :src="brand.logo_url || 'https://placehold.co/400x200?text='+brand.name" 
             :alt="brand.name"
+            format="webp"
+            loading="lazy"
+            fetchpriority="low"
+            sizes="200px"
             class="max-h-full max-w-full object-contain grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105"
           />
         </NuxtLink>

@@ -10,6 +10,7 @@ export default defineNuxtConfig({
   },
 
   modules: [
+    '@nuxt/image',
     '@nuxtjs/google-fonts',
     '@nuxtjs/i18n',
     '@pinia/nuxt',
@@ -17,10 +18,31 @@ export default defineNuxtConfig({
     'nuxt-swiper'
   ],
 
+  image: {
+    format: ['webp'],
+    screens: {
+      xs: 320,
+      sm: 640,
+      md: 768,
+      lg: 1024,
+      xl: 1280,
+      xxl: 1536,
+    },
+    ipx: {
+      maxAge: 60 * 60 * 24 * 30,
+    },
+  },
+
   routeRules: {
     '/products/**': { isr: 60 },
     '/shop/**': { isr: 60 },
     '/categories/**': { isr: 60 },
+    '/brands/**': { swr: 3600 },
+    '/about': { prerender: true },
+    '/contact': { prerender: true },
+    '/faq': { prerender: true },
+    '/shipping': { prerender: true },
+    '/terms': { prerender: true },
     // Dashboard/My profile pages are dynamic
     '/my/**': { ssr: false },
     // Production API Proxies (Vite proxy overrides these locally)
@@ -96,6 +118,10 @@ export default defineNuxtConfig({
       meta: [
         { name: 'description', content: 'Discover high-quality fashion essentials for the modern wardrobe.' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1' }
+      ],
+      link: [
+        { rel: 'preconnect', href: 'https://simp-commerce-api.onrender.com' },
+        { rel: 'preconnect', href: 'https://placehold.co' },
       ]
     }
   },

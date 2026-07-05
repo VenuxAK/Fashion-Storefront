@@ -100,13 +100,21 @@ export const useWishlistStore = defineStore('wishlist', () => {
     if (!saved) return
     try {
       const localItems = JSON.parse(saved)
-      for (const item of localItems) {
-        await api('/wishlist/toggle', {
-          method: 'POST',
-          body: { product_id: item.product_id },
-        })
-      }
-    } catch {}
+      await api('/wishlist/sync', {
+        method: 'POST',
+        body: { product_ids: localItems.map((i: any) => i.product_id) },
+      })
+    } catch {
+      try {
+        const localItems = JSON.parse(saved)
+        for (const item of localItems) {
+          await api('/wishlist/toggle', {
+            method: 'POST',
+            body: { product_id: item.product_id },
+          })
+        }
+      } catch {}
+    }
     localStorage.removeItem('wishlist')
     await fetchWishlist()
   }

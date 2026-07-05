@@ -19,9 +19,15 @@ const isTransparentHeaderPage = computed(() => {
     </main>
     
     <AppFooter />
-    <MiniCart />
-    <NotificationToast />
-    <BackToTop />
-    <ProductQuickView />
+    <ClientOnly>
+      <LazyMiniCart />
+    </ClientOnly>
+    <ClientOnly>
+      <LazyNotificationToast />
+    </ClientOnly>
+    <LazyBackToTop />
+    <ClientOnly>
+      <LazyProductQuickView />
+    </ClientOnly>
   </div>
 </template>

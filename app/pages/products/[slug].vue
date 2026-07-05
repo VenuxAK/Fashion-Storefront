@@ -10,9 +10,13 @@ const cartStore = useCartStore()
 const wishlistStore = useWishlistStore()
 const { notify } = useNotify()
 
-const { data: productData, error } = await useAsyncData(
+const { data: productData, error, pending } = await useAsyncData(
   `product-${route.params.slug}`,
-  () => getProductBySlug(route.params.slug as string)
+  () => getProductBySlug(route.params.slug as string),
+  {
+    getCachedData: (key) => useNuxtData(key).data.value,
+    timeout: 10000,
+  }
 )
 
 const product = computed(() => (productData.value as any)?.data || null)
@@ -23,7 +27,7 @@ const selectedColor = ref('')
 const activeTab = ref('description')
 const selectedImageIndex = ref(0)
 
-const { url } = useImage()
+const { url } = useMedia()
 
 // Gallery: collect unique images from product + variants
 const allImages = computed<string[]>(() => {
@@ -109,7 +113,10 @@ watch(product, (newVal) => {
 </script>
 
 <template>
-  <div v-if="product" class="container py-20">
+  <div v-if="pending" class="container py-20">
+    <SkeletonPage />
+  </div>
+  <div v-else-if="product" class="container py-20">
     <!-- Breadcrumbs -->
     <nav class="flex items-center space-x-2 text-[10px] uppercase font-bold tracking-widest text-gray-400 mb-12">
       <NuxtLink to="/" class="hover:text-primary transition-colors">Home</NuxtLink>
@@ -123,9 +130,13 @@ watch(product, (newVal) => {
       <!-- Gallery -->
       <div class="space-y-6">
         <div class="aspect-[3/4] bg-gray-50 overflow-hidden relative group">
-          <img
+          <NuxtImg
             :src="selectedImage"
             :alt="product.name"
+            format="webp"
+            loading="eager"
+            fetchpriority="high"
+            sizes="(max-width: 1024px) 100vw, 50vw"
             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
           <div v-if="allImages.length > 1" class="absolute inset-0 flex items-center justify-between px-4 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -140,7 +151,7 @@ watch(product, (newVal) => {
             class="aspect-square bg-gray-50 cursor-pointer border-2 transition-colors overflow-hidden"
             :class="selectedImageIndex === i ? 'border-accent' : 'border-transparent hover:border-accent/50'"
           >
-            <img :src="img" class="w-full h-full object-cover" :class="selectedImageIndex !== i ? 'opacity-60 hover:opacity-100' : ''">
+            <NuxtImg :src="img" format="webp" loading="lazy" fetchpriority="low" sizes="200px" class="w-full h-full object-cover" :class="selectedImageIndex !== i ? 'opacity-60 hover:opacity-100' : ''" />
           </div>
         </div>
       </div>

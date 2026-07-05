@@ -29,7 +29,7 @@ const toggleCategory = (id: number) => {
 }
 
 
-const { data: productsData, refresh: refreshProducts } = await useAsyncData(
+const { data: productsData, refresh: refreshProducts, pending: productsPending } = await useAsyncData(
   'shop-products', 
   () => getProducts({ 
     page: currentPage.value, 
@@ -40,11 +40,18 @@ const { data: productsData, refresh: refreshProducts } = await useAsyncData(
     max_price: debouncedMaxPrice.value,
     sort: sortBy.value
   }),
-  { watch: [currentPage, selectedCategory, selectedBrands, debouncedSearchQuery, debouncedMinPrice, debouncedMaxPrice, sortBy] }
+  { 
+    watch: [currentPage, selectedCategory, selectedBrands, debouncedSearchQuery, debouncedMinPrice, debouncedMaxPrice, sortBy],
+    getCachedData: (key) => useNuxtData(key).data.value,
+  }
 )
 
-const { data: categoriesData } = await useAsyncData('shop-categories', () => getCategories())
-const { data: brandsData } = await useAsyncData('shop-brands', () => getBrands())
+const { data: categoriesData, pending: categoriesPending } = await useAsyncData('shop-categories', () => getCategories(), {
+  getCachedData: (key) => useNuxtData(key).data.value,
+})
+const { data: brandsData, pending: brandsPending } = await useAsyncData('shop-brands', () => getBrands(), {
+  getCachedData: (key) => useNuxtData(key).data.value,
+})
 
 const products = computed(() => {
   const raw = (productsData.value as any)?.data || productsData.value || []
@@ -235,8 +242,11 @@ useSeoMeta({
           </div>
 
           <!-- Product Listing -->
+          <div v-if="productsPending && products.length === 0">
+            <SkeletonProductGrid :count="9" :columns="viewMode === 'grid' ? 3 : 1" />
+          </div>
           <div 
-            v-if="products.length > 0" 
+            v-else-if="products.length > 0" 
             :class="[viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6' : 'flex flex-col gap-6']"
           >
             <ProductCard 

@@ -92,7 +92,7 @@ const handleGoogleLogin = async () => {
         <p class="text-xs text-gray-400 uppercase tracking-widest font-bold">Or login with</p>
         <div class="flex justify-center space-x-4">
           <button @click="handleGoogleLogin" class="w-12 h-12 border border-gray-100 flex items-center justify-center hover:bg-gray-50 transition-colors">
-            <img src="https://www.svgrepo.com/show/355037/google.svg" class="w-5 h-5">
+            <NuxtImg src="https://www.svgrepo.com/show/355037/google.svg" format="webp" loading="eager" fetchpriority="low" width="20" height="20" class="w-5 h-5" />
           </button>
         </div>
         <p class="text-xs text-gray-400 uppercase tracking-widest font-bold pt-6">

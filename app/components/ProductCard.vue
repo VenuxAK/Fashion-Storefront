@@ -29,7 +29,7 @@ const cartStore = useCartStore()
 const wishlistStore = useWishlistStore()
 const uiStore = useUiStore()
 const { notify } = useNotify()
-const { url } = useImage()
+const { url } = useMedia()
 
 const imageUrl = computed(() => url(props.product.image))
 
@@ -108,12 +108,15 @@ const toggleWishlist = () => {
 
       <!-- Image -->
       <NuxtLink :to="`/products/${product.slug}`" class="w-full h-full flex items-center justify-center">
-        <img 
+        <NuxtImg 
           :src="imageUrl" 
           :alt="product.name" 
           loading="lazy"
+          fetchpriority="low"
+          format="webp"
+          sizes="sm:320px md:400px lg:400px"
           class="max-w-full max-h-full object-contain transition-transform duration-700 group-hover:scale-105"
-        >
+        />
       </NuxtLink>
 
       <!-- Actions Overlay (Grid Only) -->

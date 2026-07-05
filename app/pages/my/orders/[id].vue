@@ -9,10 +9,13 @@ const route = useRoute()
 const { getOrderDetails, cancelOrder } = useProfile()
 const { notify } = useNotify()
 
-const { data: orderData, pending, refresh } = await useAsyncData(`order-${route.params.id}`, () => getOrderDetails(route.params.id as string))
+const { data: orderData, pending, refresh } = await useAsyncData(`order-${route.params.id}`, () => getOrderDetails(route.params.id as string), {
+  getCachedData: (key) => useNuxtData(key).data.value,
+  timeout: 10000,
+})
 
 const order = computed(() => (orderData.value as any)?.data || null)
-const { url } = useImage()
+const { url } = useMedia()
 
 const isCancelling = ref(false)
 
@@ -212,7 +215,7 @@ const currentStepIndex = computed(() => {
               <div v-for="item in order.items" :key="item.id" class="p-6 flex items-center justify-between gap-6">
                 <div class="flex items-center gap-6">
                   <div class="w-20 h-24 bg-gray-50 shrink-0">
-                    <img v-if="item.variant?.image || item.variant?.product?.image" :src="url(item.variant?.image || item.variant?.product?.image)" class="w-full h-full object-cover">
+                    <NuxtImg v-if="item.variant?.image || item.variant?.product?.image" :src="url(item.variant?.image || item.variant?.product?.image)" format="webp" loading="lazy" fetchpriority="low" sizes="80px" class="w-full h-full object-cover" />
                   </div>
                   <div>
                     <p class="text-sm font-bold uppercase">{{ item.variant?.product?.name || 'Unknown Product' }}</p>

@@ -15,7 +15,7 @@ const addToCart = (product: any) => {
   notify(`Added ${product.name} to cart.`, 'success')
 }
 
-const { url } = useImage()
+const { url } = useMedia()
 const getImageUrl = (image: string) => url(image)
 
 onMounted(() => {
@@ -46,7 +46,7 @@ useSeoMeta({
           >
             <div class="flex items-center space-x-8 w-full md:w-auto">
               <div class="w-20 h-24 bg-gray-50 shrink-0">
-                <img :src="getImageUrl(item.image)" class="w-full h-full object-cover">
+                <NuxtImg :src="getImageUrl(item.image)" format="webp" loading="lazy" fetchpriority="low" sizes="96px" class="w-full h-full object-cover" />
               </div>
               <div class="space-y-1">
                 <p v-if="item.category" class="text-[10px] text-gray-400 uppercase tracking-widest font-bold">{{ item.category }}</p>

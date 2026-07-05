@@ -6,7 +6,7 @@ import { useCartStore } from '~/stores/cart'
 const uiStore = useUiStore()
 const cartStore = useCartStore()
 
-const { url } = useImage()
+const { url } = useMedia()
 const getImageUrl = (image: string) => url(image)
 
 onMounted(() => {
@@ -69,7 +69,7 @@ onMounted(() => {
 
           <div v-else v-for="item in cartStore.items" :key="item.id" class="flex space-x-4 border-b border-gray-50 pb-6">
             <div class="w-24 h-24 shrink-0 bg-gray-50">
-              <img :src="getImageUrl(item.image || '')" :alt="item.name" class="w-full h-full object-cover">
+              <NuxtImg :src="getImageUrl(item.image || '')" :alt="item.name" format="webp" loading="lazy" fetchpriority="low" sizes="96px" class="w-full h-full object-cover" />
             </div>
             <div class="grow space-y-1">
               <div class="flex justify-between items-start">

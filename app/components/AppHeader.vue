@@ -130,5 +130,5 @@ const toggleLocale = () => {
       </div>
     </Transition>
   </header>
-  <SearchOverlay />
+  <LazySearchOverlay />
 </template>
