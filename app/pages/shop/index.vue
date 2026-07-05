@@ -18,6 +18,8 @@ const viewMode = ref<'grid' | 'list'>('grid')
 
 // Filter states
 const selectedBrands = ref<number[]>([])
+const selectedSizes = ref<string[]>([])
+const selectedColors = ref<string[]>([])
 const openCategories = ref<number[]>([])
 
 const toggleCategory = (id: number) => {
@@ -38,10 +40,12 @@ const { data: productsData, refresh: refreshProducts, pending: productsPending }
     search: debouncedSearchQuery.value,
     min_price: debouncedMinPrice.value,
     max_price: debouncedMaxPrice.value,
-    sort: sortBy.value
+    sort: sortBy.value,
+    size: selectedSizes.value.length ? selectedSizes.value.join(',') : undefined,
+    color: selectedColors.value.length ? selectedColors.value.join(',') : undefined,
   }),
   { 
-    watch: [currentPage, selectedCategory, selectedBrands, debouncedSearchQuery, debouncedMinPrice, debouncedMaxPrice, sortBy],
+    watch: [currentPage, selectedCategory, selectedBrands, debouncedSearchQuery, debouncedMinPrice, debouncedMaxPrice, sortBy, selectedSizes, selectedColors],
     getCachedData: (key) => useNuxtData(key).data.value,
   }
 )
@@ -66,6 +70,69 @@ const brands = computed(() => {
   return Array.isArray(raw) ? raw : []
 })
 const pagination = computed(() => (productsData.value as any)?.meta || {})
+
+const availableSizes = computed(() => {
+  const sizes = new Set<string>()
+  allProducts.value.forEach((p: any) =>
+    p.variants?.forEach((v: any) => v.size && sizes.add(v.size))
+  )
+  return [...sizes].sort()
+})
+
+const availableColors = computed(() => {
+  const colors = new Set<string>()
+  allProducts.value.forEach((p: any) =>
+    p.variants?.forEach((v: any) => v.color && colors.add(v.color))
+  )
+  return [...colors].sort()
+})
+
+const allProducts = ref<any[]>([])
+const isLoadingMore = ref(false)
+const loadedPages = ref(1)
+
+watch(products, (next) => {
+  if (currentPage.value === 1) {
+    allProducts.value = [...next]
+    loadedPages.value = 1
+  }
+}, { immediate: true })
+
+watch([selectedCategory, selectedBrands, debouncedSearchQuery, debouncedMinPrice, debouncedMaxPrice, sortBy, selectedSizes, selectedColors], () => {
+  allProducts.value = []
+  loadedPages.value = 1
+})
+
+const loadMore = async () => {
+  if (isLoadingMore.value || !hasMore.value) return
+  isLoadingMore.value = true
+  const nextPage = loadedPages.value + 1
+  try {
+    const params: any = {
+      page: nextPage,
+      category_slug: selectedCategory.value,
+      brand_id: selectedBrands.value.length ? selectedBrands.value.join(',') : undefined,
+      search: debouncedSearchQuery.value,
+      min_price: debouncedMinPrice.value,
+      max_price: debouncedMaxPrice.value,
+      sort: sortBy.value,
+      size: selectedSizes.value.length ? selectedSizes.value.join(',') : undefined,
+      color: selectedColors.value.length ? selectedColors.value.join(',') : undefined,
+    }
+    const res: any = await getProducts(params)
+    const newItems = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : []
+    if (newItems.length) {
+      allProducts.value = [...allProducts.value, ...newItems]
+      loadedPages.value = nextPage
+    }
+  } catch {} finally {
+    isLoadingMore.value = false
+  }
+}
+
+const hasMore = computed(() => {
+  return loadedPages.value < (pagination.value.last_page || 1)
+})
 
 const setCategory = (slug: string) => {
   selectedCategory.value = slug
@@ -100,7 +167,6 @@ useSeoMeta({
                   </button>
                 </li>
                 <li v-for="cat in categories" :key="cat.id" class="space-y-1">
-                  <!-- Parent Category -->
                   <div class="flex items-center justify-between group">
                     <button 
                       @click="setCategory(cat.slug)"
@@ -124,7 +190,6 @@ useSeoMeta({
                     </div>
                   </div>
 
-                  <!-- Sub Categories (Accordion) -->
                   <div 
                     v-show="openCategories.includes(cat.id)" 
                     class="pl-4 pt-1 space-y-2 overflow-hidden transition-all duration-300"
@@ -144,6 +209,19 @@ useSeoMeta({
                   </div>
                 </li>
               </ul>
+            </div>
+
+            <hr class="border-gray-100" />
+
+            <!-- Brands -->
+            <div class="space-y-4">
+              <h3 class="text-sm font-bold text-gray-900 mb-2">Brands</h3>
+              <div class="space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+                <label v-for="brand in brands" :key="brand.id" class="flex items-center gap-3 cursor-pointer group">
+                  <input type="checkbox" :value="brand.id" v-model="selectedBrands" class="w-4 h-4 rounded border-gray-300 text-rose-500 focus:ring-rose-500 cursor-pointer">
+                  <span class="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">{{ brand.name }}</span>
+                </label>
+              </div>
             </div>
 
             <hr class="border-gray-100" />
@@ -169,19 +247,38 @@ useSeoMeta({
               </div>
             </div>
 
-            <hr class="border-gray-100" />
-
-            <!-- Brands -->
-            <div class="space-y-4">
-              <h3 class="text-sm font-bold text-gray-900 mb-2">Brands</h3>
-              <div class="space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
-                <label v-for="brand in brands" :key="brand.id" class="flex items-center gap-3 cursor-pointer group">
-                  <input type="checkbox" :value="brand.id" v-model="selectedBrands" class="w-4 h-4 rounded border-gray-300 text-rose-500 focus:ring-rose-500 cursor-pointer">
-                  <span class="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">{{ brand.name }}</span>
+            <!-- Size -->
+            <div v-if="availableSizes.length" class="space-y-4">
+              <hr class="border-gray-100" />
+              <h3 class="text-sm font-bold text-gray-900 mb-2">Size</h3>
+              <div class="flex flex-wrap gap-2">
+                <label
+                  v-for="size in availableSizes" :key="size"
+                  class="flex items-center gap-2 cursor-pointer px-3 py-1.5 border rounded-md text-xs font-medium transition-colors"
+                  :class="selectedSizes.includes(size) ? 'border-rose-500 bg-rose-50 text-rose-600' : 'border-gray-200 text-gray-600 hover:border-gray-300'"
+                >
+                  <input type="checkbox" :value="size" v-model="selectedSizes" class="sr-only" />
+                  {{ size }}
                 </label>
               </div>
             </div>
 
+            
+            <!-- Color -->
+            <div v-if="availableColors.length" class="space-y-4">
+              <hr v-if="availableSizes.length" class="border-gray-100" />
+              <h3 class="text-sm font-bold text-gray-900 mb-2">Color</h3>
+              <div class="flex flex-wrap gap-2">
+                <label
+                  v-for="color in availableColors" :key="color"
+                  class="flex items-center gap-2 cursor-pointer px-3 py-1.5 border rounded-md text-xs font-medium transition-colors"
+                  :class="selectedColors.includes(color) ? 'border-rose-500 bg-rose-50 text-rose-600' : 'border-gray-200 text-gray-600 hover:border-gray-300'"
+                >
+                  <input type="checkbox" :value="color" v-model="selectedColors" class="sr-only" />
+                  {{ color }}
+                </label>
+              </div>
+            </div>
 
           </div>
         </aside>
@@ -191,7 +288,7 @@ useSeoMeta({
           <!-- Toolbar -->
           <div class="bg-white rounded-xl shadow-[0_1px_3px_rgba(3,0,71,0.09)] flex flex-col sm:flex-row justify-between items-center px-5 py-4 gap-4">
             <div class="flex items-center w-full sm:w-auto text-sm text-gray-500">
-              <span class="hidden sm:inline">Showing {{ pagination.from || 0 }}-{{ pagination.to || 0 }} of {{ pagination.total || 0 }} results</span>
+              <span class="hidden sm:inline">Showing {{ allProducts.length || 0 }} of {{ pagination.total || 0 }} results</span>
               <span class="sm:hidden">{{ pagination.total || 0 }} results</span>
             </div>
 
@@ -250,7 +347,7 @@ useSeoMeta({
             :class="[viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6' : 'flex flex-col gap-6']"
           >
             <ProductCard 
-              v-for="product in products" 
+              v-for="product in allProducts" 
               :key="product.id" 
               :product="product" 
               :view="viewMode"
@@ -261,16 +358,18 @@ useSeoMeta({
             <p class="text-gray-500 text-lg">No products found.</p>
           </div>
 
-          <!-- Pagination -->
-          <div v-if="pagination.last_page > 1" class="flex justify-center gap-2 pt-6">
-            <button 
-              v-for="page in pagination.last_page" 
-              :key="page"
-              @click="currentPage = page"
-              class="w-10 h-10 flex items-center justify-center rounded-full text-sm font-medium transition-all"
-              :class="[currentPage === page ? 'bg-rose-500 text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200 hover:border-rose-500 hover:text-rose-500']"
+          <!-- Load More -->
+          <div v-if="hasMore" class="flex justify-center pt-8">
+            <button
+              @click="loadMore"
+              :disabled="isLoadingMore"
+              class="btn btn-outline px-16 py-4 text-xs font-bold uppercase tracking-widest"
             >
-              {{ page }}
+              <span v-if="isLoadingMore" class="flex items-center gap-2">
+                <span class="w-4 h-4 border-2 border-gray-400 border-t-primary rounded-full animate-spin" />
+                Loading...
+              </span>
+              <span v-else>Load More</span>
             </button>
           </div>
         </main>
