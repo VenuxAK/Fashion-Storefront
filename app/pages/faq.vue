@@ -3,18 +3,20 @@ import { ChevronDown } from 'lucide-vue-next'
 
 useSeoMeta({
   title: 'FAQ | SimpCommerce',
-  description: 'Frequently asked questions about ordering, shipping, and returns.',
+  description: 'Frequently asked questions about payments, ordering, shipping, returns, and account management.',
 })
 
 const faqs = [
-  { q: 'What payment methods do you accept?', a: 'We currently accept Cash on Delivery (COD) for local orders. Online payment options will be available soon.' },
-  { q: 'How long does shipping take?', a: 'Standard shipping takes 3-5 business days for local orders. International shipping may take 7-14 business days depending on your location.' },
-  { q: 'Do you ship internationally?', a: 'Yes, we ship worldwide. Shipping costs and delivery times vary by destination.' },
-  { q: 'What is your return policy?', a: 'We accept returns within 30 days of delivery. Items must be unworn with tags attached. Contact our support team to initiate a return.' },
-  { q: 'How do I track my order?', a: 'Once your order ships, you will receive a tracking number via email. You can also view your order status in your account dashboard.' },
-  { q: 'Can I cancel my order?', a: 'Yes, you can cancel your order from your account dashboard as long as it is still in "Processing" status. Once shipped, orders cannot be cancelled.' },
-  { q: 'Do you have a size guide?', a: 'Yes, size guides are available on each product page. If you need further assistance, please contact our support team.' },
-  { q: 'How do I care for my garments?', a: 'We recommend following the care instructions on each garment\'s label. Generally, wash in cold water and hang dry to extend the life of your clothing.' },
+  { q: 'What payment methods do you accept?', a: 'We accept online card payments via Stripe (Visa, Mastercard, American Express) and Cash on Delivery (COD) for local orders. All online payments are processed securely — we do not store your card details.' },
+  { q: 'How long does shipping take?', a: 'Standard shipping takes 3-5 business days for local orders. International shipping may take 7-14 business days depending on your destination country.' },
+  { q: 'Do you ship internationally?', a: 'Yes, we ship worldwide. International shipping rates are calculated at checkout based on your destination. Duties and customs fees may apply and are the responsibility of the recipient.' },
+  { q: 'What is your return policy?', a: 'We accept returns within 30 days of delivery. Items must be unworn, unwashed, and with original tags attached. Refunds are processed to the original payment method within 5-7 business days after we receive the return.' },
+  { q: 'How do I track my order?', a: 'Once your order has shipped, you will receive a confirmation email. You can also check your order status anytime from your account dashboard under My Orders.' },
+  { q: 'Can I cancel or modify my order?', a: 'You can cancel your order from your account dashboard as long as it is still in "Processing" status. Once an order has been shipped, it cannot be cancelled. To modify an order, contact our support team as soon as possible.' },
+  { q: 'How do I find the right size?', a: 'Size guides are available on each product page. We recommend checking the size chart and fit notes before ordering. If you are between sizes, we suggest sizing up for a more relaxed fit.' },
+  { q: 'Is my personal and payment information secure?', a: 'Yes. Our site uses SSL encryption for all data transmission. Online payments are handled by Stripe, a PCI-DSS Level 1 certified payment processor. We never have access to your full card details.' },
+  { q: 'How do I care for my garments?', a: 'Follow the care instructions on each garment\'s label. In general: wash in cold water with similar colors, use mild detergent, and hang or lay flat to dry. Avoid bleach and high-heat drying to extend the life of your clothing.' },
+  { q: 'How do I contact customer support?', a: 'You can reach us by email at hello@simpcommerce.com, by phone at +95 1 234 5678, or by using the contact form on our Contact page. We respond within 24 hours on business days.' },
 ]
 
 const openIndex = ref<number | null>(null)
