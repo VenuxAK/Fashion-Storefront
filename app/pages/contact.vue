@@ -39,18 +39,18 @@ useSeoMeta({
         </div>
       </div>
 
-      <form class="space-y-6" @submit.prevent>
+      <form @submit.prevent="notify('Message sent successfully. We will get back to you soon.', 'success')" class="space-y-6">
         <div>
           <label class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2 block">Name</label>
-          <input type="text" class="w-full border border-gray-200 p-4 text-sm focus:outline-none focus:border-primary transition-colors" placeholder="Your name" />
+          <input type="text" autocomplete="name" required class="w-full border border-gray-200 p-4 text-sm focus:outline-none focus:border-primary transition-colors" placeholder="Your name" />
         </div>
         <div>
           <label class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2 block">Email</label>
-          <input type="email" class="w-full border border-gray-200 p-4 text-sm focus:outline-none focus:border-primary transition-colors" placeholder="your@email.com" />
+          <input type="email" autocomplete="email" required class="w-full border border-gray-200 p-4 text-sm focus:outline-none focus:border-primary transition-colors" placeholder="your@email.com" />
         </div>
         <div>
           <label class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2 block">Message</label>
-          <textarea rows="5" class="w-full border border-gray-200 p-4 text-sm focus:outline-none focus:border-primary transition-colors resize-none" placeholder="How can we help?" />
+          <textarea rows="5" required class="w-full border border-gray-200 p-4 text-sm focus:outline-none focus:border-primary transition-colors resize-none" placeholder="How can we help?" />
         </div>
         <button type="submit" class="btn btn-primary w-full py-4 text-xs font-bold uppercase tracking-widest">Send Message</button>
       </form>

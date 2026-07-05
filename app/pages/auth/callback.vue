@@ -5,6 +5,11 @@ const { refreshIdentity } = useSanctumAuth()
 const wishlistStore = useWishlistStore()
 const cartStore = useCartStore()
 
+useSeoMeta({
+  title: 'Authenticating | SimpCommerce',
+  description: 'Completing your authentication...',
+})
+
 onMounted(async () => {
   try {
     // Refresh the user identity from the API using the newly set Sanctum cookie

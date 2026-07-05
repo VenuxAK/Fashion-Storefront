@@ -80,7 +80,7 @@ const handlePlaceOrder = async () => {
     cartStore.resetLocalCart()
 
     if (response.checkout_url) {
-      window.open(response.checkout_url, '_blank')
+      window.location.href = response.checkout_url
       isPlacingOrder.value = false
       isPlacingStripeOrder.value = false
       isWaitingForPayment.value = true
@@ -118,29 +118,29 @@ useSeoMeta({ title: 'Secure Checkout | SimpCommerce', description: 'Complete you
               <div class="grid grid-cols-2 gap-4">
                 <div class="space-y-1.5">
                   <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Name</label>
-                  <input v-model="newAddress.name" type="text" class="w-full bg-white border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-gray-400 transition-colors">
+                  <input v-model="newAddress.name" type="text" autocomplete="shipping name" class="w-full bg-white border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-gray-400 transition-colors">
                 </div>
                 <div class="space-y-1.5">
                   <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Phone</label>
-                  <input v-model="newAddress.phone" type="text" class="w-full bg-white border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-gray-400 transition-colors">
+                  <input v-model="newAddress.phone" type="tel" autocomplete="tel" class="w-full bg-white border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-gray-400 transition-colors">
                 </div>
               </div>
               <div class="space-y-1.5">
                 <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Street</label>
-                <input v-model="newAddress.street" type="text" class="w-full bg-white border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-gray-400 transition-colors">
+                <input v-model="newAddress.street" type="text" autocomplete="street-address" class="w-full bg-white border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-gray-400 transition-colors">
               </div>
               <div class="grid grid-cols-3 gap-4">
                 <div class="space-y-1.5">
                   <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">City</label>
-                  <input v-model="newAddress.city" type="text" class="w-full bg-white border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-gray-400 transition-colors">
+                  <input v-model="newAddress.city" type="text" autocomplete="address-level2" class="w-full bg-white border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-gray-400 transition-colors">
                 </div>
                 <div class="space-y-1.5">
                   <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">State</label>
-                  <input v-model="newAddress.state" type="text" class="w-full bg-white border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-gray-400 transition-colors">
+                  <input v-model="newAddress.state" type="text" autocomplete="address-level1" class="w-full bg-white border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-gray-400 transition-colors">
                 </div>
                 <div class="space-y-1.5">
                   <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Postal</label>
-                  <input v-model="newAddress.postal_code" type="text" class="w-full bg-white border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-gray-400 transition-colors">
+                  <input v-model="newAddress.postal_code" type="text" autocomplete="postal-code" class="w-full bg-white border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-gray-400 transition-colors">
                 </div>
               </div>
               <div class="flex gap-3 pt-2">
@@ -305,6 +305,5 @@ useSeoMeta({ title: 'Secure Checkout | SimpCommerce', description: 'Complete you
 </template>
 
 <style scoped>
-@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 .animate-fade-in { animation: fadeIn 0.25s ease-out; }
 </style>

@@ -22,8 +22,6 @@ const { data: productData, error, pending } = await useAsyncData(
 const product = computed(() => (productData.value as any)?.data || null)
 
 const quantity = ref(1)
-const selectedSize = ref('')
-const selectedColor = ref('')
 const activeTab = ref('description')
 const selectedImageIndex = ref(0)
 
@@ -33,7 +31,8 @@ const { url } = useMedia()
 const allImages = computed<string[]>(() => {
   const imgs: string[] = []
   if (product.value?.image) imgs.push(url(product.value.image))
-  product.value?.variants?.forEach((v: any) => {
+  const variants = Array.isArray(product.value?.variants) ? product.value.variants : []
+  variants.forEach((v: any) => {
     const img = v.image ? url(v.image) : null
     if (img && !imgs.includes(img)) imgs.push(img)
   })
@@ -42,38 +41,18 @@ const allImages = computed<string[]>(() => {
 
 const selectedImage = computed(() => allImages.value[selectedImageIndex.value] || allImages.value[0])
 
-// Variant: extract real sizes/colors from API data
-const sizes = computed(() => {
-  const set = new Set(product.value?.variants?.map((v: any) => v.size).filter(Boolean) as string[])
-  return [...set]
-})
-
-const colors = computed(() => {
-  const set = new Set(product.value?.variants?.map((v: any) => v.color).filter(Boolean) as string[])
-  return [...set]
-})
-
-const needsSelection = computed(() => {
-  return !!(product.value?.variants?.some((v: any) => v.size) || product.value?.variants?.some((v: any) => v.color))
-})
-
-const selectedVariant = computed(() => {
-  if (!product.value?.variants?.length) return null
-  if (!needsSelection.value) {
-    return product.value.variants.find((v: any) => (v.stock_quantity || 0) > 0) || product.value.variants[0]
-  }
-  return product.value.variants.find((v: any) =>
-    (!selectedSize.value || v.size === selectedSize.value) &&
-    (!selectedColor.value || v.color === selectedColor.value)
-  ) || null
-})
+const {
+  selectedSize, selectedColor,
+  sizes, colors, needsSelection,
+  selectedVariant, inStock: canAddToCart,
+  adjustedPrice: price,
+} = useVariantSelector(
+  computed(() => Array.isArray(product.value?.variants) ? product.value.variants : []),
+  computed(() => product.value?.base_price || 0)
+)
 
 const increment = () => quantity.value++
 const decrement = () => quantity.value > 1 && quantity.value--
-
-const canAddToCart = computed(() => {
-  return !!selectedVariant.value && (selectedVariant.value.stock_quantity || 0) > 0
-})
 
 const addToCart = async () => {
   if (!product.value || !selectedVariant.value) return

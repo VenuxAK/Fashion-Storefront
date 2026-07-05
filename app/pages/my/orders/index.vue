@@ -11,6 +11,11 @@ const { data: ordersData, pending } = await useAsyncData('my-orders', () => getO
   timeout: 10000,
 })
 
+useSeoMeta({
+  title: 'My Orders | SimpCommerce',
+  description: 'Track and manage your orders.',
+})
+
 const orders = computed(() => (ordersData.value as any)?.data || [])
 const { url } = useMedia()
 

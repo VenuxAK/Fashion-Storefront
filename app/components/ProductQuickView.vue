@@ -15,8 +15,6 @@ const { getProductBySlug } = useProduct()
 const product = ref<any>(null)
 const loading = ref(false)
 const quantity = ref(1)
-const selectedSize = ref('')
-const selectedColor = ref('')
 const selectedImageIndex = ref(0)
 
 // Watch for quickViewProduct changes and fetch full product data
@@ -54,7 +52,8 @@ watch(() => uiStore.quickViewProduct, async (newProduct) => {
 const allImages = computed<string[]>(() => {
   const imgs: string[] = []
   if (product.value?.image) imgs.push(url(product.value.image))
-  product.value?.variants?.forEach((v: any) => {
+  const rawVariants = Array.isArray(product.value?.variants) ? product.value.variants : []
+  rawVariants.forEach((v: any) => {
     const img = v.image ? url(v.image) : null
     if (img && !imgs.includes(img)) imgs.push(img)
   })
@@ -63,42 +62,15 @@ const allImages = computed<string[]>(() => {
 
 const selectedImage = computed(() => allImages.value[selectedImageIndex.value] || allImages.value[0])
 
-// Variant extraction
-const sizes = computed(() => {
-  const set = new Set(product.value?.variants?.map((v: any) => v.size).filter(Boolean) as string[])
-  return [...set]
-})
-
-const colors = computed(() => {
-  const set = new Set(product.value?.variants?.map((v: any) => v.color).filter(Boolean) as string[])
-  return [...set]
-})
-
-const needsSelection = computed(() => {
-  return !!(product.value?.variants?.some((v: any) => v.size) || product.value?.variants?.some((v: any) => v.color))
-})
-
-const selectedVariant = computed(() => {
-  if (!product.value?.variants?.length) return null
-  if (!needsSelection.value) {
-    return product.value.variants.find((v: any) => (v.stock_quantity || 0) > 0) || product.value.variants[0]
-  }
-  return product.value.variants.find((v: any) =>
-    (!selectedSize.value || v.size === selectedSize.value) &&
-    (!selectedColor.value || v.color === selectedColor.value)
-  ) || null
-})
-
-const canAddToCart = computed(() => {
-  return !!selectedVariant.value && (selectedVariant.value.stock_quantity || 0) > 0
-})
-
-const price = computed(() => {
-  if (!product.value) return 0
-  const base = parseFloat(String(product.value.base_price || 0))
-  const adjustment = parseFloat(String(selectedVariant.value?.price_adjustment || 0))
-  return base + adjustment
-})
+const {
+  selectedSize, selectedColor,
+  sizes, colors, needsSelection,
+  selectedVariant, inStock,
+  adjustedPrice: price,
+} = useVariantSelector(
+  computed(() => Array.isArray(product.value?.variants) ? product.value.variants : []),
+  computed(() => product.value?.base_price || 0)
+)
 
 const increment = () => quantity.value++
 const decrement = () => quantity.value > 1 && quantity.value--
@@ -302,10 +274,10 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                   <button
                     @click="addToCart"
                     class="grow bg-primary text-white h-12 text-xs font-bold uppercase tracking-[0.15em] hover:bg-black transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                    :disabled="!canAddToCart"
+                    :disabled="!inStock"
                   >
                     <ShoppingBag class="w-4 h-4" />
-                    {{ !selectedVariant ? 'Select Options' : !canAddToCart ? 'Out of Stock' : 'Add to Cart' }}
+                    {{ !selectedVariant ? 'Select Options' : !inStock ? 'Out of Stock' : 'Add to Cart' }}
                   </button>
                   <button
                     @click="toggleWishlist"

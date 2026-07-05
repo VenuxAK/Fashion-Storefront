@@ -6,6 +6,11 @@ definePageMeta({
 const { user } = useAuth()
 const { updateProfile } = useProfile()
 
+useSeoMeta({
+  title: 'My Profile | SimpCommerce',
+  description: 'Manage your profile settings.',
+})
+
 const form = reactive({
   name: user.value?.name || '',
   email: user.value?.email || '',
@@ -55,12 +60,12 @@ const handleUpdate = async () => {
             <div class="space-y-6">
               <div class="space-y-2">
                 <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Full Name</label>
-                <input v-model="form.name" type="text" required class="w-full border-b border-gray-100 focus:border-accent outline-none py-4 text-sm transition-colors" placeholder="Your Name">
+                <input v-model="form.name" type="text" required autocomplete="name" class="w-full border-b border-gray-100 focus:border-accent outline-none py-4 text-sm transition-colors" placeholder="Your Name">
               </div>
 
               <div class="space-y-2">
                 <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Email Address</label>
-                <input v-model="form.email" type="email" required class="w-full border-b border-gray-100 focus:border-accent outline-none py-4 text-sm transition-colors" placeholder="your@email.com">
+                <input v-model="form.email" type="email" required autocomplete="email" class="w-full border-b border-gray-100 focus:border-accent outline-none py-4 text-sm transition-colors" placeholder="your@email.com">
               </div>
 
               <div class="pt-8 border-t border-gray-100">
@@ -68,11 +73,11 @@ const handleUpdate = async () => {
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div class="space-y-2">
                     <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">New Password</label>
-                    <input v-model="form.password" type="password" class="w-full border-b border-gray-100 focus:border-accent outline-none py-4 text-sm transition-colors" placeholder="••••••••">
+                    <input v-model="form.password" type="password" autocomplete="new-password" class="w-full border-b border-gray-100 focus:border-accent outline-none py-4 text-sm transition-colors" placeholder="••••••••">
                   </div>
                   <div class="space-y-2">
                     <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Confirm New Password</label>
-                    <input v-model="form.password_confirmation" type="password" class="w-full border-b border-gray-100 focus:border-accent outline-none py-4 text-sm transition-colors" placeholder="••••••••">
+                    <input v-model="form.password_confirmation" type="password" autocomplete="new-password" class="w-full border-b border-gray-100 focus:border-accent outline-none py-4 text-sm transition-colors" placeholder="••••••••">
                   </div>
                 </div>
               </div>

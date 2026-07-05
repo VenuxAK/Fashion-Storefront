@@ -280,6 +280,7 @@ useSeoMeta({
           <form @submit.prevent class="flex max-w-md">
             <input 
               type="email" 
+              autocomplete="email"
               placeholder="Enter your email" 
               class="grow bg-white border border-gray-200 px-6 py-4 text-sm focus:ring-1 focus:ring-accent outline-none shadow-sm"
             >

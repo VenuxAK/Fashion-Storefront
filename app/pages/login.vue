@@ -24,6 +24,11 @@ const handleLogin = async () => {
   }
 }
 
+useSeoMeta({
+  title: 'Login | SimpCommerce',
+  description: 'Sign in to your SimpCommerce account.',
+})
+
 const handleGoogleLogin = async () => {
   try {
     const api = useApi()
@@ -56,6 +61,7 @@ const handleGoogleLogin = async () => {
             v-model="form.email"
             type="email" 
             required
+            autocomplete="email"
             class="w-full border-b border-gray-200 focus:border-accent outline-none py-3 text-sm transition-colors"
             placeholder="example@mail.com"
           >
@@ -67,6 +73,7 @@ const handleGoogleLogin = async () => {
             v-model="form.password"
             type="password" 
             required
+            autocomplete="current-password"
             class="w-full border-b border-gray-200 focus:border-accent outline-none py-3 text-sm transition-colors"
             placeholder="••••••••"
           >

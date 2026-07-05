@@ -132,6 +132,10 @@ const getImageUrl = (image: string) => url(image)
 </template>
 
 <style scoped>
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #333 #f1f1f1;
+}
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
 }

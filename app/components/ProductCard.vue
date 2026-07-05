@@ -33,29 +33,13 @@ const { url } = useMedia()
 
 const imageUrl = computed(() => url(props.product.image))
 
-const totalStock = computed(() => {
-  return (props.product.variants || []).reduce((sum, v) => sum + (v.stock_quantity || 0), 0)
-})
-
-const hasStock = computed(() => totalStock.value > 0)
-
-// Check if the product has variants with size/color that require user selection
-const needsVariantSelection = computed(() => {
-  const variants = props.product.variants || []
-  return variants.some(v => v.size) || variants.some(v => v.color)
-})
-
-const defaultVariant = computed(() => {
-  return (props.product.variants || []).find(v => (v.stock_quantity || 0) > 0)
-    || props.product.variants?.[0]
-    || { id: props.product.id, price_adjustment: 0, stock_quantity: 0 }
-})
-
-const price = computed(() => {
-  const base = parseFloat(String(props.product.base_price || 0))
-  const adjustment = parseFloat(String(defaultVariant.value?.price_adjustment || 0))
-  return base + adjustment
-})
+const {
+  needsSelection: needsVariantSelection,
+  hasStock, adjustedPrice: price,
+} = useVariantSelector(
+  computed(() => Array.isArray(props.product.variants) ? props.product.variants : []),
+  computed(() => props.product.base_price || 0)
+)
 
 const addToCart = async () => {
   if (!hasStock.value) return

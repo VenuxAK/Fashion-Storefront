@@ -69,6 +69,11 @@ const setDefault = async (id: number) => {
   }
 }
 
+useSeoMeta({
+  title: 'My Addresses | SimpCommerce',
+  description: 'Manage your shipping addresses.',
+})
+
 onMounted(() => {
   fetchAddresses()
 })
@@ -97,29 +102,29 @@ onMounted(() => {
           <div class="grid grid-cols-2 gap-6">
             <div class="space-y-2">
               <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Recipient Name</label>
-              <input v-model="newAddress.name" type="text" class="w-full bg-white border-none px-4 py-4 text-sm focus:ring-1 focus:ring-accent outline-none shadow-sm">
+              <input v-model="newAddress.name" type="text" autocomplete="shipping name" class="w-full bg-white border-none px-4 py-4 text-sm focus:ring-1 focus:ring-accent outline-none shadow-sm">
             </div>
             <div class="space-y-2">
               <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Phone Number</label>
-              <input v-model="newAddress.phone" type="text" class="w-full bg-white border-none px-4 py-4 text-sm focus:ring-1 focus:ring-accent outline-none shadow-sm">
+              <input v-model="newAddress.phone" type="tel" autocomplete="tel" class="w-full bg-white border-none px-4 py-4 text-sm focus:ring-1 focus:ring-accent outline-none shadow-sm">
             </div>
           </div>
           <div class="space-y-2">
             <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Street Address</label>
-            <input v-model="newAddress.street" type="text" class="w-full bg-white border-none px-4 py-4 text-sm focus:ring-1 focus:ring-accent outline-none shadow-sm">
+            <input v-model="newAddress.street" type="text" autocomplete="street-address" class="w-full bg-white border-none px-4 py-4 text-sm focus:ring-1 focus:ring-accent outline-none shadow-sm">
           </div>
           <div class="grid grid-cols-3 gap-6">
             <div class="space-y-2">
               <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">City</label>
-              <input v-model="newAddress.city" type="text" class="w-full bg-white border-none px-4 py-4 text-sm focus:ring-1 focus:ring-accent outline-none shadow-sm">
+              <input v-model="newAddress.city" type="text" autocomplete="address-level2" class="w-full bg-white border-none px-4 py-4 text-sm focus:ring-1 focus:ring-accent outline-none shadow-sm">
             </div>
             <div class="space-y-2">
               <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">State</label>
-              <input v-model="newAddress.state" type="text" class="w-full bg-white border-none px-4 py-4 text-sm focus:ring-1 focus:ring-accent outline-none shadow-sm">
+              <input v-model="newAddress.state" type="text" autocomplete="address-level1" class="w-full bg-white border-none px-4 py-4 text-sm focus:ring-1 focus:ring-accent outline-none shadow-sm">
             </div>
             <div class="space-y-2">
               <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Postal Code</label>
-              <input v-model="newAddress.postal_code" type="text" class="w-full bg-white border-none px-4 py-4 text-sm focus:ring-1 focus:ring-accent outline-none shadow-sm">
+              <input v-model="newAddress.postal_code" type="text" autocomplete="postal-code" class="w-full bg-white border-none px-4 py-4 text-sm focus:ring-1 focus:ring-accent outline-none shadow-sm">
             </div>
           </div>
           <div class="flex items-center space-x-2">

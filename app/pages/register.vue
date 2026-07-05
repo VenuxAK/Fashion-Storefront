@@ -11,6 +11,11 @@ const form = reactive({
 const isLoading = ref(false)
 const error = ref('')
 
+useSeoMeta({
+  title: 'Register | SimpCommerce',
+  description: 'Create your SimpCommerce account.',
+})
+
 const handleRegister = async () => {
   isLoading.value = true
   error.value = ''
@@ -46,6 +51,7 @@ const handleRegister = async () => {
             v-model="form.name"
             type="text" 
             required
+            autocomplete="name"
             class="w-full border-b border-gray-200 focus:border-accent outline-none py-3 text-sm transition-colors"
             placeholder="John Doe"
           >
@@ -57,6 +63,7 @@ const handleRegister = async () => {
             v-model="form.email"
             type="email" 
             required
+            autocomplete="email"
             class="w-full border-b border-gray-200 focus:border-accent outline-none py-3 text-sm transition-colors"
             placeholder="example@mail.com"
           >
@@ -70,6 +77,7 @@ const handleRegister = async () => {
             v-model="form.password"
             type="password" 
             required
+            autocomplete="new-password"
             class="w-full border-b border-gray-200 focus:border-accent outline-none py-3 text-sm transition-colors"
             placeholder="••••••••"
           >
@@ -81,6 +89,7 @@ const handleRegister = async () => {
             v-model="form.password_confirmation"
             type="password" 
             required
+            autocomplete="new-password"
             class="w-full border-b border-gray-200 focus:border-accent outline-none py-3 text-sm transition-colors"
             placeholder="••••••••"
           >

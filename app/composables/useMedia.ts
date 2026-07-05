@@ -1,4 +1,5 @@
 const PLACEHOLDER = 'https://placehold.co/800x1000/eee/999?text=No+Image'
+const urlCache = new Map<string, string>()
 
 export function useMedia() {
   const config = useRuntimeConfig()
@@ -7,7 +8,10 @@ export function useMedia() {
   function url(path: string | null | undefined): string {
     if (!path) return PLACEHOLDER
     if (path.startsWith('http')) return path
-    return `${baseUrl}/storage/${path}`
+    if (urlCache.has(path)) return urlCache.get(path)!
+    const resolved = `${baseUrl}/storage/${path}`
+    urlCache.set(path, resolved)
+    return resolved
   }
 
   return { url }

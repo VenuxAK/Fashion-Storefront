@@ -1,6 +1,11 @@
 <script setup lang="ts">
 const route = useRoute()
 const orderNumber = computed(() => route.query.number || 'N/A')
+useSeoMeta({
+  title: 'Order Confirmed | SimpCommerce',
+  description: 'Your order has been placed successfully.',
+})
+
 const paymentMethod = computed(() => {
   const method = route.query.method || 'cod'
   return method === 'stripe' ? 'Card Payment (Stripe)' : 'Cash on Delivery'

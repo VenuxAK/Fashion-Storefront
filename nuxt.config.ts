@@ -55,6 +55,15 @@ export default defineNuxtConfig({
     plugins: [
       tailwindcss()
     ],
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            swiper: ['swiper'],
+          },
+        },
+      },
+    },
     server: {
       proxy: {
         '/api': { target: process.env.NUXT_PROXY_TARGET || 'http://localhost:8000', changeOrigin: true },
