@@ -6,7 +6,7 @@ definePageMeta({
 })
 
 const { getOrders } = useProfile()
-const { markAllRead } = useOrderNotifications()
+const { markAllRead } = useNotifications()
 const { data: ordersData, pending } = await useAsyncData('my-orders', () => getOrders(), {
   getCachedData: (key) => useNuxtData(key).data.value,
   timeout: 10000,
