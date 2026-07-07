@@ -13,7 +13,7 @@ const { y } = useWindowScroll()
 const isScrolled = computed(() => y.value > 50)
 
 const isMenuOpen = ref(false)
-const { unreadCount } = useOrderNotifications()
+const { unreadCount } = useNotifications()
 
 const navLinks = [
   { label: 'Home', href: '/' },
@@ -61,7 +61,7 @@ const navLinks = [
         </button>
         
         <NuxtLink
-          :to="isLoggedIn ? '/my/orders' : '/login'"
+          :to="isLoggedIn ? '/my/notifications' : '/login'"
           class="hover:text-accent transition-colors relative"
         >
           <Bell class="w-4 h-4 md:w-5 md:h-5" />

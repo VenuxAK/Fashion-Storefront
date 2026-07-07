@@ -101,6 +101,9 @@ export default defineNuxtConfig({
       apiUrl: process.env.NUXT_PUBLIC_API_URL || '/api/v1',
       storeSlug: process.env.NUXT_PUBLIC_STORE_SLUG || 'clothing',
       stripeKey: process.env.NUXT_PUBLIC_STRIPE_KEY || '',
+      reverbKey: process.env.NUXT_PUBLIC_REVERB_APP_KEY || '',
+      reverbHost: process.env.NUXT_PUBLIC_REVERB_HOST || 'localhost',
+      reverbPort: process.env.NUXT_PUBLIC_REVERB_PORT || '8080',
     },
   },
 
@@ -110,7 +113,8 @@ export default defineNuxtConfig({
       title: 'SimpCommerce | Modern Minimalist Boutique',
       meta: [
         { name: 'description', content: 'Discover high-quality fashion essentials for the modern wardrobe.' },
-        { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1' }
+        { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1' },
+        { 'http-equiv': 'Content-Security-Policy', content: "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: http://localhost:8000 https://simp-commerce-api.onrender.com https://images.unsplash.com https://placehold.co; connect-src 'self' http://localhost:8000 ws://localhost:8080 wss://localhost:8080 https://simp-commerce-api.onrender.com; object-src 'none'" },
       ],
       link: [
         { rel: 'preconnect', href: 'https://simp-commerce-api.onrender.com' },

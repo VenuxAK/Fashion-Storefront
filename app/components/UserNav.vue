@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { Package, User, MapPin, LogOut } from 'lucide-vue-next'
+import { Bell, Package, User, MapPin, LogOut } from 'lucide-vue-next'
 
 const { logout } = useAuth()
 const route = useRoute()
+const { unreadCount } = useNotifications()
 
 const navLinks = [
+  { name: 'Notifications', href: '/my/notifications', icon: Bell, badge: unreadCount },
   { name: 'My Orders', href: '/my/orders', icon: Package },
   { name: 'Profile', href: '/my/profile', icon: User },
   { name: 'Address Book', href: '/my/addresses', icon: MapPin }
@@ -20,11 +22,17 @@ const navLinks = [
           v-for="link in navLinks" 
           :key="link.href" 
           :to="link.href"
-          class="flex items-center space-x-3 px-4 py-3 text-sm font-medium transition-colors rounded-none"
+          class="flex items-center space-x-3 px-4 py-3 text-sm font-medium transition-colors rounded-none relative"
           :class="[route.path.startsWith(link.href) ? 'bg-primary text-white' : 'text-gray-600 hover:bg-gray-50']"
         >
           <component :is="link.icon" class="w-4 h-4" />
           <span>{{ link.name }}</span>
+          <span
+            v-if="link.badge && link.badge.value > 0"
+            class="ml-auto bg-red-500 text-white text-[8px] min-w-[16px] h-4 rounded-full flex items-center justify-center px-1"
+          >
+            {{ link.badge.value > 99 ? '99+' : link.badge.value }}
+          </span>
         </NuxtLink>
       </nav>
     </div>
