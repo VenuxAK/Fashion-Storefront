@@ -12,6 +12,7 @@ interface Product {
   slug: string
   base_price: string | number
   image: string
+  image_url?: string
   category?: { name: string }
   is_new?: boolean
   is_sale?: boolean
@@ -31,7 +32,7 @@ const uiStore = useUiStore()
 const { notify } = useNotify()
 const { url } = useMedia()
 
-const imageUrl = computed(() => url(props.product.image))
+const imageUrl = computed(() => url(props.product.image_url || props.product.image))
 
 const {
   needsSelection: needsVariantSelection,
@@ -66,7 +67,7 @@ const toggleWishlist = () => {
     name: props.product.name,
     slug: props.product.slug,
     price: price.value,
-    image: props.product.image,
+    image: props.product.image_url || props.product.image,
     category: props.product.category?.name
   })
   const action = wasInWishlist ? 'removed from' : 'added to'

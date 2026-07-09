@@ -91,7 +91,7 @@ const getImageUrl = (image: string) => url(image)
               >
                 <div class="flex items-center space-x-6">
                   <div class="w-16 h-20 bg-gray-50 shrink-0">
-                    <NuxtImg :src="getImageUrl(product.image || '')" format="webp" loading="lazy" fetchpriority="low" sizes="64px" class="w-full h-full object-cover" />
+                    <NuxtImg :src="getImageUrl(product.image_url || product.image || '')" format="webp" loading="lazy" fetchpriority="low" sizes="64px" class="w-full h-full object-cover" />
                   </div>
                   <div class="space-y-1">
                     <p class="text-sm font-bold uppercase tracking-tight">{{ product.name }}</p>

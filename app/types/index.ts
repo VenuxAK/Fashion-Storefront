@@ -3,6 +3,7 @@ export interface Category {
   name: string
   slug: string
   image?: string
+  image_url?: string
 }
 
 export interface Variant {
@@ -14,6 +15,7 @@ export interface Variant {
   stock_quantity: number
   price_adjustment?: number | string
   image?: string
+  image_url?: string
 }
 
 export interface Product {
@@ -23,6 +25,7 @@ export interface Product {
   description: string
   base_price: number | string
   image?: string
+  image_url?: string
   category_id?: number
   category?: Category
   variants?: Variant[]
