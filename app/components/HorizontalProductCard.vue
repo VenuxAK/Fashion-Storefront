@@ -7,6 +7,7 @@ interface Product {
   slug: string
   base_price: string | number
   image: string
+  image_url?: string
   category?: { name: string }
   variants?: any[]
 }
@@ -16,7 +17,7 @@ const props = defineProps<{
 }>()
 
 const { url } = useMedia()
-const imageUrl = computed(() => url(props.product.image))
+const imageUrl = computed(() => url(props.product.image_url || props.product.image))
 
 const defaultVariant = computed(() => {
   return (props.product.variants || []).find(v => (v.stock_quantity || 0) > 0)

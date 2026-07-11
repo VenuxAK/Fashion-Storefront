@@ -30,10 +30,10 @@ const { url } = useMedia()
 // Gallery: collect unique images from product + variants
 const allImages = computed<string[]>(() => {
   const imgs: string[] = []
-  if (product.value?.image) imgs.push(url(product.value.image))
+  if (product.value?.image_url || product.value?.image) imgs.push(url(product.value.image_url || product.value.image))
   const variants = Array.isArray(product.value?.variants) ? product.value.variants : []
   variants.forEach((v: any) => {
-    const img = v.image ? url(v.image) : null
+    const img = v.image_url || v.image ? url(v.image_url || v.image) : null
     if (img && !imgs.includes(img)) imgs.push(img)
   })
   return imgs.length ? imgs : ['https://placehold.co/800x1000/eee/999?text=No+Image']

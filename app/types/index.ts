@@ -3,6 +3,7 @@ export interface Category {
   name: string
   slug: string
   image?: string
+  image_url?: string
 }
 
 export interface Variant {
@@ -14,6 +15,7 @@ export interface Variant {
   stock_quantity: number
   price_adjustment?: number | string
   image?: string
+  image_url?: string
 }
 
 export interface Product {
@@ -23,6 +25,7 @@ export interface Product {
   description: string
   base_price: number | string
   image?: string
+  image_url?: string
   category_id?: number
   category?: Category
   variants?: Variant[]
@@ -77,6 +80,18 @@ export interface Order {
   created_at: string
   shipping_address?: Address
   items?: OrderItem[]
+}
+
+export interface OrderNotification {
+  id: number
+  type: 'new_order' | 'status_change' | 'shipment_update' | 'payment_confirmed'
+  title: string
+  body: string
+  order_id: number
+  order_number: string
+  read_at: string | null
+  created_at: string
+  diff_for_humans: string
 }
 
 export interface ApiResponse<T> {
