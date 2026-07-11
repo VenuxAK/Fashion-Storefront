@@ -45,9 +45,9 @@ export default defineNuxtConfig({
     // Dashboard/My profile pages are dynamic
     '/my/**': { ssr: false },
     // Production API Proxies (Vite proxy overrides these locally)
-    '/api/**': { proxy: 'https://simp-commerce-api.onrender.com/api/**' },
-    '/sanctum/**': { proxy: 'https://simp-commerce-api.onrender.com/sanctum/**' },
-    '/storage/**': { proxy: 'https://simp-commerce-api.onrender.com/storage/**' }
+    '/api/**': { proxy: 'https://api.simpcommerce.shop/api/**' },
+    '/sanctum/**': { proxy: 'https://api.simpcommerce.shop/sanctum/**' },
+    '/storage/**': { proxy: 'https://api.simpcommerce.shop/storage/**' }
   },
 
   vite: {

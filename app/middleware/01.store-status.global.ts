@@ -1,4 +1,5 @@
 export default defineNuxtRouteMiddleware(async (to, from) => {
+  if (import.meta.prerender) return
   const { getStoreSettings } = useProduct()
 
   const { error } = await useAsyncData('store-settings-check', () => getStoreSettings(), {
