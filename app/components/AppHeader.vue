@@ -16,7 +16,7 @@ const isMenuOpen = ref(false)
 const { unreadCount } = useNotifications()
 
 const navLinks = [
-  { label: 'Home', href: '/' },
+  // { label: 'Home', href: '/' },
   { label: 'Shop', href: '/shop' },
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' }
@@ -35,7 +35,8 @@ const navLinks = [
       </button>
 
       <!-- Logo -->
-      <NuxtLink to="/" class="text-2xl font-bold tracking-tighter uppercase">
+       <!-- TODO: Change back to / when home page is ready -->
+      <NuxtLink to="/shop" class="text-2xl font-bold tracking-tighter uppercase">
         SimpCommerce
       </NuxtLink>
 
