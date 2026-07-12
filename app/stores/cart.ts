@@ -46,7 +46,7 @@ export const useCartStore = defineStore('cart', () => {
           name: item.variant?.product?.name || 'Unknown Product',
           price: price,
           quantity: item.quantity,
-          image: item.variant?.image || item.variant?.product?.image,
+          image: item.variant?.image_url || item.variant?.product?.image_url || item.variant?.image || item.variant?.product?.image,
           color: item.variant?.color,
           size: item.variant?.size
         }
@@ -78,7 +78,7 @@ export const useCartStore = defineStore('cart', () => {
           name: product?.name || 'Unknown Product',
           price: price,
           quantity,
-          image: variant?.image || product?.image,
+          image: variant?.image_url || product?.image_url || variant?.image || product?.image,
           color: variant?.color,
           size: variant?.size
         })
@@ -93,7 +93,7 @@ export const useCartStore = defineStore('cart', () => {
       name: product?.name || 'Unknown Product',
       price: 0,
       quantity,
-      image: variant?.image || product?.image,
+      image: variant?.image_url || product?.image_url || variant?.image || product?.image,
       color: variant?.color,
       size: variant?.size
     }

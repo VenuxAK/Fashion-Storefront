@@ -82,8 +82,8 @@ const currentStepIndex = computed(() => {
       <UserNav />
 
       <main class="grow space-y-12">
-        <div v-if="pending" class="py-20 text-center uppercase tracking-widest text-xs font-bold text-gray-400">
-          Loading Order Details...
+        <div v-if="pending" class="py-12">
+          <LoadingSpinner label="Loading Order Details..." />
         </div>
 
         <div v-else-if="order" class="space-y-10">
@@ -220,7 +220,7 @@ const currentStepIndex = computed(() => {
               <div v-for="item in order.items" :key="item.id" class="p-6 flex items-center justify-between gap-6">
                 <div class="flex items-center gap-6">
                   <div class="w-20 h-24 bg-gray-50 shrink-0">
-                    <NuxtImg v-if="item.variant?.image || item.variant?.product?.image" :src="url(item.variant?.image || item.variant?.product?.image)" format="webp" loading="lazy" fetchpriority="low" sizes="80px" class="w-full h-full object-cover" />
+                    <NuxtImg v-if="item.variant?.image_url || item.variant?.product?.image_url || item.variant?.image || item.variant?.product?.image" :src="url(item.variant?.image_url || item.variant?.product?.image_url || item.variant?.image || item.variant?.product?.image)" format="webp" loading="lazy" fetchpriority="low" sizes="80px" class="w-full h-full object-cover" />
                   </div>
                   <div>
                     <p class="text-sm font-bold uppercase">{{ item.variant?.product?.name || 'Unknown Product' }}</p>

@@ -25,8 +25,8 @@ useSeoMeta({
       </div>
 
       <!-- Brands Grid -->
-      <div v-if="pending" class="flex justify-center py-20">
-        <div class="w-10 h-10 border-4 border-rose-500 border-t-transparent rounded-full animate-spin"></div>
+      <div v-if="pending" class="py-12">
+        <LoadingSpinner label="Loading Brands..." />
       </div>
       
       <div v-else-if="brands.length > 0" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">

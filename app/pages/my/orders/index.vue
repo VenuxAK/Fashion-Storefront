@@ -39,14 +39,14 @@ const getStatusColor = (status: string) => {
     <div class="flex flex-col lg:flex-row gap-16">
       <UserNav />
 
-      <main class="flex-grow space-y-12">
+      <main class="grow space-y-12">
         <div class="space-y-4 border-b border-gray-100 pb-8">
           <h1 class="text-3xl font-bold uppercase tracking-tighter">My Orders</h1>
           <p class="text-gray-500 text-xs uppercase tracking-[0.3em]">Track and manage your purchases</p>
         </div>
 
-        <div v-if="pending" class="py-20 text-center uppercase tracking-widest text-xs font-bold text-gray-400">
-          Loading Orders...
+        <div v-if="pending" class="py-12">
+          <LoadingSpinner label="Loading Orders..." />
         </div>
 
         <div v-else-if="orders.length > 0" class="space-y-6">
@@ -54,11 +54,11 @@ const getStatusColor = (status: string) => {
             v-for="order in orders"
             :key="order.id"
             :to="`/my/orders/${order.id}`"
-            class="block border border-gray-100 p-8 flex flex-col md:flex-row justify-between items-center gap-8 hover:shadow-md transition-shadow group"
+            class="block border border-gray-100 p-8 flex-col md:flex-row justify-between items-center gap-8 hover:shadow-md transition-shadow group"
           >
             <div class="flex items-center space-x-8 w-full md:w-auto">
-              <div class="w-16 h-20 bg-gray-50 flex-shrink-0">
-                <NuxtImg v-if="order.items?.[0]?.variant?.product?.image" :src="url(order.items[0].variant.product.image)" format="webp" loading="lazy" fetchpriority="low" sizes="64px" class="w-full h-full object-cover" />
+              <div class="w-16 h-20 bg-gray-50 shrink-0">
+                <NuxtImg v-if="order.items?.[0]?.variant?.product?.image_url || order.items?.[0]?.variant?.product?.image" :src="url(order.items[0].variant.product.image_url || order.items[0].variant.product.image)" format="webp" loading="lazy" fetchpriority="low" sizes="64px" class="w-full h-full object-cover" />
               </div>
               <div class="space-y-1">
                 <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400">{{ order.order_number }}</p>

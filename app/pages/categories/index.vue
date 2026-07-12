@@ -42,8 +42,8 @@ useSeoMeta({
       </div>
 
       <!-- Categories Grid -->
-      <div v-if="pending" class="flex justify-center py-20">
-        <div class="w-10 h-10 border-4 border-rose-500 border-t-transparent rounded-full animate-spin"></div>
+      <div v-if="pending" class="py-12">
+        <LoadingSpinner label="Loading Categories..." />
       </div>
       
       <div v-else-if="childCategories.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
