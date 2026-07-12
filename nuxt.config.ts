@@ -118,7 +118,7 @@ export default defineNuxtConfig({
       meta: [
         { name: 'description', content: 'Discover high-quality fashion essentials for the modern wardrobe.' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1' },
-        { 'http-equiv': 'Content-Security-Policy', content: "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: http://localhost:8000 https://api.simpcommerce.shop https://images.unsplash.com https://placehold.co; connect-src 'self' http://localhost:8000 ws://localhost:8080 wss://localhost:8080 wss://api.simpcommerce.shop https://api.simpcommerce.shop; object-src 'none'" },
+        { 'http-equiv': 'Content-Security-Policy', content: "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: http://localhost:8000 https://api.simpcommerce.shop https://images.unsplash.com https://placehold.co https://*.r2.dev; connect-src 'self' http://localhost:8000 ws://localhost:8080 wss://localhost:8080 wss://api.simpcommerce.shop https://api.simpcommerce.shop; object-src 'none'" },
       ],
       link: [
         { rel: 'preconnect', href: 'https://api.simpcommerce.shop' },
