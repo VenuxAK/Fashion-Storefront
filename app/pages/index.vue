@@ -5,13 +5,7 @@ import { Autoplay as SwiperAutoplay } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/autoplay'
 
-definePageMeta({
-  middleware: [
-    function (to, from) {
-      return navigateTo('/shop')
-    }
-  ]
-})
+definePageMeta({})
 
 const { getProducts, getCategories, getBrands } = useProduct()
 
